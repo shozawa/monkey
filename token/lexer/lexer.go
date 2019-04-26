@@ -41,8 +41,10 @@ func (l *Lexer) NextToken() (tok token.Token) {
 	default:
 		if isDigit(l.ch) {
 			tok = l.readInteger()
-		} else {
+		} else if isLetter(l.ch) {
 			tok = l.readIdentifier()
+		} else {
+			tok = token.Token{Type: token.ILLEGAL, Literal: ""}
 		}
 		return
 	}
