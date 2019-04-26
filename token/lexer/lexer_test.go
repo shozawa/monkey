@@ -7,19 +7,17 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := "=+(){},;"
+	input := `let five = 5;`
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
+		{token.LET, "let"},
+		{token.IDENT, "five"},
 		{token.ASSIGN, "="},
-		{token.PLUS, "+"},
-		{token.LPAREN, "("},
-		{token.RPAREN, ")"},
-		{token.LBRACE, "{"},
-		{token.RBRACE, "}"},
-		{token.COMMA, ","},
+		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
+		{token.EOF, ""},
 	}
 	l := New(input)
 	for i, test := range tests {
@@ -29,6 +27,30 @@ func TestNextToken(t *testing.T) {
 		}
 		if tok.Literal != test.expectedLiteral {
 			t.Fatalf("tests[%d] - literal wrong. expecting=%q, got=%q", i, test.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestIsLetter(t *testing.T) {
+	tests := []struct {
+		input byte
+		want  bool
+	}{
+		{'a', true},
+		{'b', true},
+		{'y', true},
+		{'z', true},
+		{'A', true},
+		{'B', true},
+		{'Y', true},
+		{'Z', true},
+		{'_', true},
+		{'1', false},
+		{'!', false},
+	}
+	for _, test := range tests {
+		if got := isLetter(test.input); got != test.want {
+			t.Fatalf("input=%v, want=%v, got=%v", test.input, test.want, got)
 		}
 	}
 }
