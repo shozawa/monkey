@@ -19,13 +19,17 @@ func New(l *lexer.Lexer) *Parser {
 	return p
 }
 
-func (p *Parser) Parse() ast.Program {
-	ident1 := p.parseLetStatement()
-	ident2 := p.parseLetStatement()
-	return ast.Program{Statements: []ast.Statement{&ident1, &ident2}}
+func (p *Parser) Parse() (prog ast.Program) {
+	for p.curToken.Type != token.EOF {
+		switch p.curToken.Type {
+		case token.LET:
+			prog.Statements = append(prog.Statements, p.parseLetStatement())
+		}
+	}
+	return
 }
 
-func (p *Parser) parseLetStatement() ast.LetStatement {
+func (p *Parser) parseLetStatement() *ast.LetStatement {
 	letStmt := ast.LetStatement{Token: p.curToken}
 	p.nextToken()
 	letStmt.Name = p.parseIdentifier()
@@ -35,7 +39,7 @@ func (p *Parser) parseLetStatement() ast.LetStatement {
 	p.nextToken()
 	// skip semicolon
 	p.nextToken()
-	return letStmt
+	return &letStmt
 }
 
 func (p *Parser) parseIdentifier() *ast.Identifier {
