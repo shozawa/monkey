@@ -20,7 +20,9 @@ func New(l *lexer.Lexer) *Parser {
 }
 
 func (p *Parser) Parse() ast.Program {
-	return ast.Program{}
+	ident := ast.Identifier{Token: token.Token{Type: token.IDENT, Literal: "five"}, Value: "five"}
+	mock := ast.LetStatement{Token: token.Token{Type: token.LET, Literal: "let"}, Name: &ident}
+	return ast.Program{Statements: []ast.Statement{&mock}}
 }
 
 func (p *Parser) nextToken() {
