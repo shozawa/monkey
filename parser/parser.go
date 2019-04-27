@@ -20,9 +20,23 @@ func New(l *lexer.Lexer) *Parser {
 }
 
 func (p *Parser) Parse() ast.Program {
-	ident := ast.Identifier{Token: token.Token{Type: token.IDENT, Literal: "five"}, Value: "five"}
-	mock := ast.LetStatement{Token: token.Token{Type: token.LET, Literal: "let"}, Name: &ident}
-	return ast.Program{Statements: []ast.Statement{&mock}}
+	ident := p.parseLetStatement()
+	return ast.Program{Statements: []ast.Statement{&ident}}
+}
+
+func (p *Parser) parseLetStatement() ast.LetStatement {
+	letStmt := ast.LetStatement{Token: p.curToken}
+	p.nextToken()
+	letStmt.Name = p.parseIdentifier()
+	// skip Value
+	p.nextToken()
+	return letStmt
+}
+
+func (p *Parser) parseIdentifier() *ast.Identifier {
+	ident := ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	p.nextToken()
+	return &ident
 }
 
 func (p *Parser) nextToken() {
