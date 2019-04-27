@@ -22,6 +22,11 @@ func Start(in io.Reader, out io.Writer) {
 		line := scanner.Text()
 		l := lexer.New(line)
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
+			if tok.Type == token.ILLEGAL {
+				// TODO: Error handling
+				fmt.Println("Parse Error.")
+				break
+			}
 			fmt.Printf("%+v\n", tok)
 		}
 	}
