@@ -8,12 +8,23 @@ import (
 )
 
 func TestParseLetStatement(t *testing.T) {
-	input := "let five = 5;"
+	input := `
+	let five = 5;
+	let ten = 10;
+	`
+	tests := []struct {
+		name string
+	}{
+		{name: "five"},
+		{name: "ten"},
+	}
 	l := lexer.New(input)
 	p := New(l)
 	program := p.Parse()
-	s := program.Statements[0]
-	testLetStatment(t, s, "five")
+	for i, test := range tests {
+		s := program.Statements[i]
+		testLetStatment(t, s, test.name)
+	}
 }
 
 func testLetStatment(t *testing.T, s ast.Statement, name string) bool {

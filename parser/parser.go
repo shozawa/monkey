@@ -20,15 +20,20 @@ func New(l *lexer.Lexer) *Parser {
 }
 
 func (p *Parser) Parse() ast.Program {
-	ident := p.parseLetStatement()
-	return ast.Program{Statements: []ast.Statement{&ident}}
+	ident1 := p.parseLetStatement()
+	ident2 := p.parseLetStatement()
+	return ast.Program{Statements: []ast.Statement{&ident1, &ident2}}
 }
 
 func (p *Parser) parseLetStatement() ast.LetStatement {
 	letStmt := ast.LetStatement{Token: p.curToken}
 	p.nextToken()
 	letStmt.Name = p.parseIdentifier()
+	// skip assignment
+	p.nextToken()
 	// skip Value
+	p.nextToken()
+	// skip semicolon
 	p.nextToken()
 	return letStmt
 }
