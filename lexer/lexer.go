@@ -53,7 +53,7 @@ func (l *Lexer) NextToken() (tok token.Token) {
 }
 
 func (l *Lexer) skipWhitespace() {
-	for l.ch == ' ' {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' {
 		l.readChar()
 	}
 }
