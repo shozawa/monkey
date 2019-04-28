@@ -20,6 +20,11 @@ func (e *Environment) Get(k string) Object {
 	return e.store[k]
 }
 
+func NewEnv() *Environment {
+	store := make(map[string]Object)
+	return &Environment{store: store}
+}
+
 type Object interface {
 	Type() ObjectType
 	Inspect() string

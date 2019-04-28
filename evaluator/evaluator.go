@@ -13,8 +13,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			result = Eval(stmt, env)
 		}
 		return result
+	case *ast.LetStatement:
+		env.Set(node.Name.Value, Eval(node.Value, env))
+		return nil
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
+	case *ast.Identifier:
+		return env.Get(node.Value)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	}
