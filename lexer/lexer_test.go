@@ -66,15 +66,15 @@ func TestIsLetter(t *testing.T) {
 }
 
 func TestIfStatement(t *testing.T) {
-	input := "if (x) { 1 } else { 2 };"
+	input := "if (true) { 1 } else { 2 };"
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
-		// if (x) { 1 } else { 2 };
+		// if (true) { 1 } else { 2 };
 		{token.IF, "if"},
 		{token.LPAREN, "("},
-		{token.IDENT, "x"},
+		{token.TRUE, "true"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
 		{token.INT, "1"},

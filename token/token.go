@@ -8,9 +8,11 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"let":  LET,
-	"if":   IF,
-	"else": ELSE,
+	"let":   LET,
+	"if":    IF,
+	"else":  ELSE,
+	"true":  TRUE,
+	"false": FALSE,
 }
 
 const (
@@ -35,6 +37,8 @@ const (
 	LET      = "LET"
 	IF       = "IF"
 	ELSE     = "ELSE"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
 )
 
 func LookupIdent(ident string) Token {
