@@ -28,6 +28,19 @@ func TestParseExpressionStatement(t *testing.T) {
 	}
 }
 
+func TestMultilineExpressionStatement(t *testing.T) {
+	input := `
+	foo;
+	bar;
+	`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if got := len(program.Statements); got != 2 {
+		t.Errorf("len(program.Statements) not 2. got=%d\n", got)
+	}
+}
+
 func TestParseLetStatement(t *testing.T) {
 	input := `
 	let five = 5;
