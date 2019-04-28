@@ -8,6 +8,18 @@ const (
 	INTEGER_OBJ = "INTEGER"
 )
 
+type Environment struct {
+	store map[string]Object
+}
+
+func (e *Environment) Set(k string, v Object) {
+	e.store[k] = v
+}
+
+func (e *Environment) Get(k string) Object {
+	return e.store[k]
+}
+
 type Object interface {
 	Type() ObjectType
 	Inspect() string

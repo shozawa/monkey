@@ -13,7 +13,7 @@ func TestEval(t *testing.T) {
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.Parse()
-	o := Eval(&program)
+	o := Eval(&program, nil)
 	integer, ok := o.(*object.Integer)
 	if !ok {
 		t.Errorf("o not Integer. got=%t\n", o)
