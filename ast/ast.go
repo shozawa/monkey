@@ -41,6 +41,15 @@ func (l *LetStatement) TokenLiteral() string {
 	return l.Token.Literal
 }
 
+type ExpressionStatement struct {
+	Expression Expression
+}
+
+func (e *ExpressionStatement) statementNode() {}
+func (e *ExpressionStatement) TokenLiteral() string {
+	return e.Expression.TokenLiteral()
+}
+
 type Identifier struct {
 	Token token.Token
 	Value string
