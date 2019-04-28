@@ -74,16 +74,7 @@ func (l *Lexer) readIdentifier() token.Token {
 		l.readChar()
 	}
 	ident := l.input[position:l.position]
-	switch ident {
-	case "let":
-		return token.Token{Type: token.LET, Literal: ident}
-	case "if":
-		return token.Token{Type: token.IF, Literal: ident}
-	case "else":
-		return token.Token{Type: token.ELSE, Literal: ident}
-	default:
-		return token.Token{Type: token.IDENT, Literal: ident}
-	}
+	return token.LookupIdent(ident)
 }
 
 func (l *Lexer) readInteger() token.Token {

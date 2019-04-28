@@ -7,6 +7,12 @@ type Token struct {
 	Literal string
 }
 
+var keywords = map[string]TokenType{
+	"let":  LET,
+	"if":   IF,
+	"else": ELSE,
+}
+
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
@@ -30,3 +36,10 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 )
+
+func LookupIdent(ident string) Token {
+	if t, ok := keywords[ident]; ok {
+		return Token{Type: t, Literal: ident}
+	}
+	return Token{Type: IDENT, Literal: ident}
+}
