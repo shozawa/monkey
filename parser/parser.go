@@ -23,18 +23,25 @@ func New(l *lexer.Lexer) *Parser {
 
 func (p *Parser) Parse() (prog ast.Program) {
 	for p.curToken.Type != token.EOF {
-		switch p.curToken.Type {
-		case token.LET:
-			prog.Statements = append(prog.Statements, p.parseLetStatement())
-		// Expression Statement
-		case token.IDENT, token.INT:
-			prog.Statements = append(prog.Statements, p.parserExpressionStatement())
-		default:
-			// TODO: report parse error
-			p.nextToken()
+		if stmt := p.parseStatement(); stmt != nil {
+			prog.Statements = append(prog.Statements, stmt)
 		}
 	}
 	return
+}
+
+func (p *Parser) parseStatement() ast.Statement {
+	switch p.curToken.Type {
+	case token.LET:
+		return p.parseLetStatement()
+	// Expression Statement
+	case token.IDENT, token.INT:
+		return p.parserExpressionStatement()
+	default:
+		// TODO: report parse error
+		p.nextToken()
+		return nil
+	}
 }
 
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
