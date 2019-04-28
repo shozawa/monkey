@@ -36,9 +36,14 @@ func (p *Parser) Parse() (prog ast.Program) {
 }
 
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
-	// skip
+	stmt := ast.ExpressionStatement{}
+	switch p.curToken.Type {
+	case token.IDENT:
+		ident := p.parseIdentifier()
+		stmt.Expression = ident
+	}
 	p.nextToken()
-	return &ast.ExpressionStatement{}
+	return &stmt
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
@@ -56,7 +61,6 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 func (p *Parser) parseIdentifier() *ast.Identifier {
 	ident := ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	p.nextToken()
 	return &ident
 }
 

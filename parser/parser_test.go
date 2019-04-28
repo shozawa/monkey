@@ -15,6 +15,17 @@ func TestParseExpressionStatement(t *testing.T) {
 	if got := len(program.Statements); got != 1 {
 		t.Errorf("len(program.Statements) not 1 got=%d\n", got)
 	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
+	}
+	ident, ok := stmt.Expression.(*ast.Identifier)
+	if !ok {
+		t.Errorf("stmt.Expression not ast.Identifier. got=%t\n", stmt.Expression)
+	}
+	if got := ident.TokenLiteral(); got != "foo" {
+		t.Errorf("ident.TokenLiteral not 'foo'. got=%q\n", got)
+	}
 }
 
 func TestParseLetStatement(t *testing.T) {
