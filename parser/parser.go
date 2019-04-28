@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"strconv"
+
 	"github.com/shozawa/monkey/ast"
 	"github.com/shozawa/monkey/lexer"
 	"github.com/shozawa/monkey/token"
@@ -25,7 +27,7 @@ func (p *Parser) Parse() (prog ast.Program) {
 		case token.LET:
 			prog.Statements = append(prog.Statements, p.parseLetStatement())
 		// Expression Statement
-		case token.IDENT:
+		case token.IDENT, token.INT:
 			prog.Statements = append(prog.Statements, p.parserExpressionStatement())
 		default:
 			// TODO: report parse error
@@ -39,8 +41,9 @@ func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
 	stmt := ast.ExpressionStatement{}
 	switch p.curToken.Type {
 	case token.IDENT:
-		ident := p.parseIdentifier()
-		stmt.Expression = ident
+		stmt.Expression = p.parseIdentifier()
+	case token.INT:
+		stmt.Expression = p.parserIntegerLiteral()
 	}
 	p.nextToken()
 	return &stmt
@@ -62,6 +65,13 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 func (p *Parser) parseIdentifier() *ast.Identifier {
 	ident := ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 	return &ident
+}
+
+func (p *Parser) parserIntegerLiteral() *ast.IntegerLiteral {
+	// TODO: error handling
+	i, _ := strconv.Atoi(p.curToken.Literal)
+	integerLiteral := ast.IntegerLiteral{Token: p.curToken, Value: int64(i)}
+	return &integerLiteral
 }
 
 func (p *Parser) nextToken() {

@@ -41,6 +41,27 @@ func TestMultilineExpressionStatement(t *testing.T) {
 	}
 }
 
+func TestParseIntLiteral(t *testing.T) {
+	input := "42;"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if got := len(program.Statements); got != 1 {
+		t.Errorf("len(program.Statements) not 1. got=%d\n", got)
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
+	}
+	integerLiteral, ok := stmt.Expression.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("stmt.Expression not ast.IntegerLiteral. got=%t\n", stmt.Expression)
+	}
+	if integerLiteral.Value != 42 {
+		t.Errorf("integerLiteral.Value not 42. got=%d\n", integerLiteral.Value)
+	}
+}
+
 func TestParseLetStatement(t *testing.T) {
 	input := `
 	let five = 5;
