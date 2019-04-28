@@ -64,3 +64,36 @@ func TestIsLetter(t *testing.T) {
 		}
 	}
 }
+
+func TestIfStatement(t *testing.T) {
+	input := "if (x) { 1 } else { 2 };"
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		// if (x) { 1 } else { 2 };
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.IDENT, "x"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.INT, "1"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.LBRACE, "{"},
+		{token.INT, "2"},
+		{token.RBRACE, "}"},
+		{token.SEMICOLON, ";"},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, test := range tests {
+		tok := l.NextToken()
+		if tok.Type != test.expectedType {
+			t.Fatalf("tests[%d] - token type wrong. expecting=%q, got=%q", i, test.expectedType, tok.Type)
+		}
+		if tok.Literal != test.expectedLiteral {
+			t.Fatalf("tests[%d] - literal wrong. expecting=%q, got=%q", i, test.expectedLiteral, tok.Literal)
+		}
+	}
+}
