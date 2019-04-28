@@ -68,21 +68,22 @@ func TestParseLetStatement(t *testing.T) {
 	let ten = 10;
 	`
 	tests := []struct {
-		name string
+		name  string
+		value int64
 	}{
-		{name: "five"},
-		{name: "ten"},
+		{name: "five", value: 5},
+		{name: "ten", value: 10},
 	}
 	l := lexer.New(input)
 	p := New(l)
 	program := p.Parse()
 	for i, test := range tests {
 		s := program.Statements[i]
-		testLetStatment(t, s, test.name)
+		testLetStatment(t, s, test.name, test.value)
 	}
 }
 
-func testLetStatment(t *testing.T, s ast.Statement, name string) bool {
+func testLetStatment(t *testing.T, s ast.Statement, name string, value int64) bool {
 	if literal := s.TokenLiteral(); literal != "let" {
 		t.Errorf("s.TokenLiteral not 'let'. got=%q", literal)
 		return false
@@ -94,6 +95,15 @@ func testLetStatment(t *testing.T, s ast.Statement, name string) bool {
 	}
 	if letStmt.Name.Value != name {
 		t.Errorf("letStmt.Name.Value not '%s'. got=%s", name, letStmt.Name.Value)
+		return false
+	}
+	integerLiteral, ok := letStmt.Value.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("letStmt.Value not ast.IntegerLiteral. got=%t\n", letStmt.Value)
+		return false
+	}
+	if got := integerLiteral.Value; got != value {
+		t.Errorf("integerLiteral.Value not %d. got=%d\n", value, got)
 		return false
 	}
 	return true

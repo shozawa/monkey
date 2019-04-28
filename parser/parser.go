@@ -55,8 +55,12 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	letStmt.Name = p.parseIdentifier()
 	// skip assignment
 	p.nextToken()
-	// skip Value
-	p.nextToken()
+	if p.curToken.Type == token.INT {
+		letStmt.Value = p.parserIntegerLiteral()
+	} else {
+		// skip Value
+		p.nextToken()
+	}
 	// skip semicolon
 	p.nextToken()
 	return &letStmt
@@ -64,6 +68,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 func (p *Parser) parseIdentifier() *ast.Identifier {
 	ident := ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	p.nextToken()
 	return &ident
 }
 
