@@ -3,6 +3,7 @@ package evaluator
 import (
 	"github.com/shozawa/monkey/ast"
 	"github.com/shozawa/monkey/object"
+	"github.com/shozawa/monkey/token"
 )
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
@@ -22,6 +23,18 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return env.Get(node.Value)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
+	case *ast.Infix:
+		switch node.Token.Type {
+		case token.PLUS:
+			integer := &object.Integer{}
+			left, ok := Eval(node.Left, env).(*object.Integer)
+			right, ok := Eval(node.Right, env).(*object.Integer)
+			if !ok {
+				// TODO: report error
+			}
+			integer.Value = left.Value + right.Value
+			return integer
+		}
 	}
 	return nil
 }

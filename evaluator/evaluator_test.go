@@ -40,3 +40,21 @@ func TestEvalLetStatement(t *testing.T) {
 		t.Errorf("integer.Value not 5. got=%d", integer.Value)
 	}
 }
+func TestEvalPlus(t *testing.T) {
+	input := `
+	let five = 5;
+	let two = 2;
+	five + two;
+	`
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.Parse()
+	o := Eval(&program, object.NewEnv())
+	integer, ok := o.(*object.Integer)
+	if !ok {
+		t.Errorf("o not Integer. got=%t\n", o)
+	}
+	if integer.Value != 7 {
+		t.Errorf("integer.Value not 7. got=%d", integer.Value)
+	}
+}
