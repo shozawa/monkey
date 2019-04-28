@@ -24,9 +24,21 @@ func (p *Parser) Parse() (prog ast.Program) {
 		switch p.curToken.Type {
 		case token.LET:
 			prog.Statements = append(prog.Statements, p.parseLetStatement())
+		// Expression Statement
+		case token.IDENT:
+			prog.Statements = append(prog.Statements, p.parserExpressionStatement())
+		default:
+			// TODO: report parse error
+			p.nextToken()
 		}
 	}
 	return
+}
+
+func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
+	// skip
+	p.nextToken()
+	return &ast.ExpressionStatement{}
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {

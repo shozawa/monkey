@@ -7,6 +7,16 @@ import (
 	"github.com/shozawa/monkey/lexer"
 )
 
+func TestParseExpressionStatement(t *testing.T) {
+	input := "foo;"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if got := len(program.Statements); got != 1 {
+		t.Errorf("len(program.Statements) not 1 got=%d\n", got)
+	}
+}
+
 func TestParseLetStatement(t *testing.T) {
 	input := `
 	let five = 5;
