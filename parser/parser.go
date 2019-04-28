@@ -35,7 +35,7 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.LET:
 		return p.parseLetStatement()
 	// Expression Statement
-	case token.IDENT, token.INT:
+	case token.IDENT, token.INT, token.IF, token.LPAREN:
 		return p.parserExpressionStatement()
 	default:
 		// TODO: report parse error
@@ -52,14 +52,22 @@ func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (p *Parser) parseExpression() ast.Expression {
+	if p.curToken.Type == token.LPAREN {
+		p.nextToken()
+	}
 	var left ast.Expression
 	switch p.curToken.Type {
 	case token.IDENT:
 		left = p.parseIdentifier()
 	case token.INT:
 		left = p.parserIntegerLiteral()
+	case token.IF:
+		left = p.parseIfExpression()
 	default:
 		left = nil
+	}
+	if p.curToken.Type == token.LPAREN {
+		p.nextToken()
 	}
 	// FIXME
 	if p.curToken.Type == token.PLUS {
@@ -92,6 +100,31 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	// skip semicolon
 	p.nextToken()
 	return &letStmt
+}
+
+func (p *Parser) parseIfExpression() *ast.IfExpression {
+	ifExpression := &ast.IfExpression{}
+	ifExpression.Token = p.curToken
+	p.nextToken()
+	ifExpression.Condition = p.parseExpression()
+	ifExpression.Consequence = p.parseBlockStatement()
+	if p.curToken.Type == token.ELSE {
+		p.nextToken()
+		ifExpression.Alternative = p.parseBlockStatement()
+	}
+	return ifExpression
+}
+
+func (p *Parser) parseBlockStatement() *ast.BlockStatement {
+	block := &ast.BlockStatement{}
+	block.Token = p.curToken
+	for p.curToken.Type != token.RBRACE {
+		if stmt := p.parseStatement(); stmt != nil {
+			block.Statements = append(block.Statements, stmt)
+		}
+	}
+	p.nextToken()
+	return block
 }
 
 func (p *Parser) parseIdentifier() *ast.Identifier {

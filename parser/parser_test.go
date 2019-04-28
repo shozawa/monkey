@@ -140,3 +140,25 @@ func testLetStatment(t *testing.T, s ast.Statement, name string, value int64) bo
 	}
 	return true
 }
+
+func TestIfExpression(t *testing.T) {
+	input := "if (x) { 1 } else { 2 };"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if got := len(program.Statements); got != 1 {
+		t.Errorf("len(program.Statements) not 1. got=%d\n", got)
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("program.Statements[0] not ExpressionStatement. got=%t\n", program.Statements[0])
+	}
+	exp, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Errorf("stmt.Expression not ast.IfExpression. got=%t\n", stmt.Expression)
+	}
+	condition := exp.Condition
+	if condition.TokenLiteral() != "x" {
+		t.Errorf("condition.TokenLiteral() not 'x'. got=%q\n", condition.TokenLiteral())
+	}
+}

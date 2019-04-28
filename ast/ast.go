@@ -80,3 +80,25 @@ func (i *Infix) expressionNode() {}
 func (i *Infix) TokenLiteral() string {
 	return i.Token.Literal
 }
+
+type BlockStatement struct {
+	Token      token.Token
+	Statements []Statement
+}
+
+func (b *BlockStatement) statementNode() {}
+func (b *BlockStatement) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+type IfExpression struct {
+	Token       token.Token
+	Condition   Expression
+	Consequence *BlockStatement
+	Alternative *BlockStatement
+}
+
+func (i *IfExpression) expressionNode() {}
+func (i *IfExpression) TokenLiteral() string {
+	return i.Token.Literal
+}
