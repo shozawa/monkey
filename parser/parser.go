@@ -39,14 +39,35 @@ func (p *Parser) Parse() (prog ast.Program) {
 
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
 	stmt := ast.ExpressionStatement{}
+	stmt.Expression = p.parseExpression()
+
+	return &stmt
+}
+
+func (p *Parser) parseExpression() ast.Expression {
+	var left ast.Expression
 	switch p.curToken.Type {
 	case token.IDENT:
-		stmt.Expression = p.parseIdentifier()
+		left = p.parseIdentifier()
 	case token.INT:
-		stmt.Expression = p.parserIntegerLiteral()
+		left = p.parserIntegerLiteral()
+	default:
+		left = nil
 	}
+	// FIXME
+	if p.curToken.Type == token.PLUS {
+		return p.parseInfix(left)
+	}
+	return left
+}
+
+func (p *Parser) parseInfix(left ast.Expression) *ast.Infix {
+	infix := &ast.Infix{}
+	infix.Token = p.curToken
+	infix.Left = left
 	p.nextToken()
-	return &stmt
+	infix.Right = p.parseExpression()
+	return infix
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
@@ -76,6 +97,7 @@ func (p *Parser) parserIntegerLiteral() *ast.IntegerLiteral {
 	// TODO: error handling
 	i, _ := strconv.Atoi(p.curToken.Literal)
 	integerLiteral := ast.IntegerLiteral{Token: p.curToken, Value: int64(i)}
+	p.nextToken()
 	return &integerLiteral
 }
 

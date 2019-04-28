@@ -69,3 +69,14 @@ func (i *IntegerLiteral) expressionNode() {}
 func (i *IntegerLiteral) TokenLiteral() string {
 	return i.Token.Literal
 }
+
+type Infix struct {
+	Token token.Token
+	Left  Expression
+	Right Expression
+}
+
+func (i *Infix) expressionNode() {}
+func (i *Infix) TokenLiteral() string {
+	return i.Token.Literal
+}

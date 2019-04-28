@@ -62,6 +62,38 @@ func TestParseIntLiteral(t *testing.T) {
 	}
 }
 
+func TestParsePlus(t *testing.T) {
+	input := "1 + 2;"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if len(program.Statements) != 1 {
+		t.Errorf("len(program.Statements) not 1. got=%d\n", len(program.Statements))
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("program.Statemetns[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
+	}
+	plus, ok := stmt.Expression.(*ast.Infix)
+	if !ok {
+		t.Errorf("stmt.Expression not ast.Infix. got=%t\n", stmt.Expression)
+	}
+	left, ok := plus.Left.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("plus.Left not ast.IntegerLiteral. got=%t\n", plus.Left)
+	}
+	if left.Value != 1 {
+		t.Errorf("left.Value not 1. got=%d\n", left.Value)
+	}
+	right, ok := plus.Right.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("plus.Right not ast.IntegerLiteral. got=%t\n", plus.Right)
+	}
+	if right.Value != 2 {
+		t.Errorf("left.Value not 1. got=%d\n", right.Value)
+	}
+}
+
 func TestParseLetStatement(t *testing.T) {
 	input := `
 	let five = 5;
