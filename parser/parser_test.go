@@ -175,3 +175,20 @@ func TestBoolLiteral(t *testing.T) {
 		t.Errorf("len(program.Statements) not 2. got=%d\n", got)
 	}
 }
+
+func TestOperatorPrecedence(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"1 + 1", "(1 + 1)"},
+	}
+	for i, test := range tests {
+		l := lexer.New(test.input)
+		p := New(l)
+		program := p.Parse()
+		if got := program.String(); got != test.want {
+			t.Errorf("[%d] program.String() not %q. input=%q, got=%q\n", i, test.want, test.input, got)
+		}
+	}
+}
