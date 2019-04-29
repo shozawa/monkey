@@ -41,7 +41,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	default:
 		// TODO: report parse error
 		p.nextToken()
-		return nil
+		panic("parseStatement error")
+		// return nil
 	}
 }
 
