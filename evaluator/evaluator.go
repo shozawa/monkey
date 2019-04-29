@@ -31,6 +31,24 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return nil
 		}
 		return &object.Bool{Value: b}
+	case *ast.BlockStatement:
+		var result object.Object
+		for _, stmt := range node.Statements {
+			result = Eval(stmt, env)
+		}
+		return result
+	case *ast.IfExpression:
+		obj := Eval(node.Condition, env)
+		b, ok := obj.(*object.Bool)
+		if !ok {
+			// TODO: report error if condition is not bool
+			return nil
+		}
+		if b.Value {
+			return Eval(node.Consequence, env)
+		} else {
+			return Eval(node.Alternative, env)
+		}
 	case *ast.Infix:
 		switch node.Token.Type {
 		case token.PLUS:
