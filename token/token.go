@@ -24,6 +24,7 @@ const (
 
 	ASSIGN = "ASSIGN"
 	PLUS   = "PLUS"
+	ASTERISK = "ASTERISK"
 
 	COMMA     = "COMMA"
 	SEMICOLON = "SEMICOLON"

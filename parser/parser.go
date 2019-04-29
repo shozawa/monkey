@@ -73,7 +73,7 @@ func (p *Parser) parseExpression() ast.Expression {
 		p.nextToken()
 	}
 	// FIXME
-	if p.curToken.Type == token.PLUS {
+	if p.curToken.Type == token.PLUS || p.curToken.Type == token.ASTERISK {
 		return p.parseInfix(left)
 	}
 	return left
