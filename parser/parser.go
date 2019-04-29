@@ -8,10 +8,18 @@ import (
 	"github.com/shozawa/monkey/token"
 )
 
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
 type Parser struct {
 	l         *lexer.Lexer
 	curToken  token.Token
 	peekToken token.Token
+
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -49,6 +57,11 @@ func (p *Parser) parseStatement() ast.Statement {
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
 	stmt := ast.ExpressionStatement{}
 	stmt.Expression = p.parseExpression()
+
+	// peek?
+	if p.curToken.Type == token.SEMICOLON {
+		p.nextToken()
+	}
 
 	return &stmt
 }
@@ -159,4 +172,16 @@ func (p *Parser) parseBoolLiteral() *ast.BoolLiteral {
 func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
+}
+
+func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
+}
+
+func (p *Parser) peekTokenIs(tokenType token.TokenType) bool {
+	return p.peekToken.Type == tokenType
 }
