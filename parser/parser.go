@@ -110,6 +110,7 @@ func (p *Parser) parseIfExpression() *ast.IfExpression {
 	ifExpression.Token = p.curToken
 	p.nextToken()
 	ifExpression.Condition = p.parseExpression()
+	p.nextToken() // parse ')'
 	ifExpression.Consequence = p.parseBlockStatement()
 	if p.curToken.Type == token.ELSE {
 		p.nextToken()
@@ -121,6 +122,7 @@ func (p *Parser) parseIfExpression() *ast.IfExpression {
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	block := &ast.BlockStatement{}
 	block.Token = p.curToken
+	p.nextToken() // consume '{'
 	for p.curToken.Type != token.RBRACE {
 		if stmt := p.parseStatement(); stmt != nil {
 			block.Statements = append(block.Statements, stmt)
