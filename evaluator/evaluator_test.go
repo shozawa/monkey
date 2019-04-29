@@ -23,6 +23,21 @@ func TestEval(t *testing.T) {
 	}
 }
 
+func TestEvalBoolLiteral(t *testing.T) {
+	input := "true;"
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.Parse()
+	o := Eval(&program, nil)
+	b, ok := o.(*object.Bool)
+	if !ok {
+		t.Errorf("o not Bool. got=%t\n", o)
+	}
+	if b.Value != true {
+		t.Errorf("b.Value not true. got=%v", b.Value)
+	}
+}
+
 func TestEvalLetStatement(t *testing.T) {
 	input := `
 	let five = 5;

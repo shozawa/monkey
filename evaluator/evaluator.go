@@ -1,6 +1,8 @@
 package evaluator
 
 import (
+	"strconv"
+
 	"github.com/shozawa/monkey/ast"
 	"github.com/shozawa/monkey/object"
 	"github.com/shozawa/monkey/token"
@@ -23,6 +25,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return env.Get(node.Value)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
+	case *ast.BoolLiteral:
+		b, err := strconv.ParseBool(node.Value)
+		if err != nil {
+			return nil
+		}
+		return &object.Bool{Value: b}
 	case *ast.Infix:
 		switch node.Token.Type {
 		case token.PLUS:

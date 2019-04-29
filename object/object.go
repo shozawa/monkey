@@ -6,6 +6,7 @@ type ObjectType string
 
 const (
 	INTEGER_OBJ = "INTEGER"
+	BOOL_OBJ    = "BOOL"
 )
 
 type Environment struct {
@@ -36,3 +37,10 @@ type Integer struct {
 
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
+
+type Bool struct {
+	Value bool
+}
+
+func (b *Bool) Type() ObjectType { return BOOL_OBJ }
+func (b *Bool) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
