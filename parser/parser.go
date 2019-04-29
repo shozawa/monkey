@@ -35,7 +35,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.LET:
 		return p.parseLetStatement()
 	// Expression Statement
-	case token.IDENT, token.INT, token.IF, token.LPAREN:
+	// TODO: refactor
+	case token.IDENT, token.INT, token.IF, token.LPAREN, token.TRUE, token.FALSE:
 		return p.parserExpressionStatement()
 	default:
 		// TODO: report parse error
@@ -63,6 +64,8 @@ func (p *Parser) parseExpression() ast.Expression {
 		left = p.parserIntegerLiteral()
 	case token.IF:
 		left = p.parseIfExpression()
+	case token.TRUE, token.FALSE:
+		left = p.parseBoolLiteral()
 	default:
 		left = nil
 	}
@@ -139,6 +142,15 @@ func (p *Parser) parserIntegerLiteral() *ast.IntegerLiteral {
 	integerLiteral := ast.IntegerLiteral{Token: p.curToken, Value: int64(i)}
 	p.nextToken()
 	return &integerLiteral
+}
+
+func (p *Parser) parseBoolLiteral() *ast.BoolLiteral {
+	literal := &ast.BoolLiteral{
+		Token: p.curToken,
+		Value: p.curToken.Literal,
+	}
+	p.nextToken()
+	return literal
 }
 
 func (p *Parser) nextToken() {

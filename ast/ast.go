@@ -70,6 +70,16 @@ func (i *IntegerLiteral) TokenLiteral() string {
 	return i.Token.Literal
 }
 
+type BoolLiteral struct {
+	Token token.Token
+	Value string
+}
+
+func (b *BoolLiteral) expressionNode() {}
+func (b *BoolLiteral) TokenLiteral() string {
+	return b.Token.Literal
+}
+
 type Infix struct {
 	Token token.Token
 	Left  Expression

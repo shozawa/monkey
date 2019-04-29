@@ -162,3 +162,16 @@ func TestIfExpression(t *testing.T) {
 		t.Errorf("condition.TokenLiteral() not 'x'. got=%q\n", condition.TokenLiteral())
 	}
 }
+
+func TestBoolLiteral(t *testing.T) {
+	input := `
+	true;
+	false;
+	`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if got := len(program.Statements); got != 2 {
+		t.Errorf("len(program.Statements) not 2. got=%d\n", got)
+	}
+}
