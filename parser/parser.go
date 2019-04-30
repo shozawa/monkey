@@ -20,6 +20,11 @@ const (
 	CALL        // myFunction()
 )
 
+var precedences = map[token.TokenType]int {
+	token.PLUS: SUM,
+	token.ASTERISK: PRODUCT,
+}
+
 type (
 	prefixParseFn func() ast.Expression
 	infixParseFn  func(ast.Expression) ast.Expression
@@ -203,4 +208,18 @@ func (p *Parser) expectPeek(tokeType token.TokenType) bool {
 	} else {
 		return false
 	}
+}
+
+func (p *Parser) peekPrecedence() int {
+	if p, ok := precedences[p.peekToken.Type]; ok {
+		return p
+	}
+	return LOWEST
+}
+
+func (p *Parser) curPrecedence() int {
+	if p, ok := precedences[p.curToken.Type]; ok {
+		return p
+	}
+	return LOWEST
 }
