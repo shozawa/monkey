@@ -149,3 +149,17 @@ func (i *IfExpression) TokenLiteral() string {
 func (b *IfExpression) String() string {
 	return "TODO"
 }
+
+type FunctionLiteral struct {
+	Token      token.Token
+	Parameters []*Identifier
+	Body       *BlockStatement
+}
+
+func (f *FunctionLiteral) expressionNode() {}
+func (f *FunctionLiteral) TokenLiteral() string {
+	return f.Token.Literal
+}
+func (f *FunctionLiteral) String() string {
+	return "TODO"
+}
