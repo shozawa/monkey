@@ -64,20 +64,19 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.LET:
 		return p.parseLetStatement()
 	default:
-		return p.parserExpressionStatement()
+		return p.parseExpressionStatement()
 	}
 }
 
-func (p *Parser) parserExpressionStatement() *ast.ExpressionStatement {
-	stmt := ast.ExpressionStatement{}
-	stmt.Expression = p.parseExpression()
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	stmt := &ast.ExpressionStatement{}
+	stmt.Expression = p.parseExpression(LOWEST)
 
-	// peek?
-	if p.curToken.Type == token.SEMICOLON {
+	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
 
-	return &stmt
+	return stmt
 }
 
 func (p *Parser) parseExpression() ast.Expression {
