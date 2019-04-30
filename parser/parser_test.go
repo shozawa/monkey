@@ -170,11 +170,14 @@ func TestOperatorPrecedence(t *testing.T) {
 
 func testLiteralExpression(t *testing.T, exp ast.Expression, want interface{}) bool {
 	switch v := want.(type) {
+	case int:
+		return testIntegerLiteral(t, exp, int64(v))
 	case int64:
 		return testIntegerLiteral(t, exp, v)
 	case string:
 		return testIdentifier(t, exp, v)
 	}
+	t.Errorf("type of exp not handled. got=%t.\n", exp)
 	return false
 }
 
