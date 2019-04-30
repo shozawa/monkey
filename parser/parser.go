@@ -48,6 +48,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.INT, p.parserIntegerLiteral)
+	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.TRUE, p.parseBoolLiteral)
 	p.registerPrefix(token.FALSE, p.parseBoolLiteral)
@@ -126,30 +127,51 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	return letStmt
 }
 
-func (p *Parser) parseIfExpression() *ast.IfExpression {
+func (p *Parser) parseIfExpression() ast.Expression {
 	ifExpression := &ast.IfExpression{}
 	ifExpression.Token = p.curToken
-	p.nextToken()
-	ifExpression.Condition = p.parseExpression()
-	p.nextToken() // parse ')'
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken() // consume LPAREN
+	ifExpression.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
 	ifExpression.Consequence = p.parseBlockStatement()
-	if p.curToken.Type == token.ELSE {
+
+	if p.peekTokenIs(token.ELSE) {
 		p.nextToken()
+
+		if !p.expectPeek(token.LBRACE) {
+			return nil
+		}
 		ifExpression.Alternative = p.parseBlockStatement()
 	}
+
 	return ifExpression
 }
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
-	block := &ast.BlockStatement{}
-	block.Token = p.curToken
+	block := &ast.BlockStatement{Token: p.curToken}
+
 	p.nextToken() // consume '{'
-	for p.curToken.Type != token.RBRACE {
+
+	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
 		if stmt := p.parseStatement(); stmt != nil {
 			block.Statements = append(block.Statements, stmt)
 		}
+		p.nextToken()
 	}
-	p.nextToken()
+
 	return block
 }
 
@@ -209,6 +231,10 @@ func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 
 func (p *Parser) peekTokenIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
+}
+
+func (p *Parser) curTokenIs(tokenType token.TokenType) bool {
+	return p.curToken.Type == tokenType
 }
 
 func (p *Parser) expectPeek(tokeType token.TokenType) bool {
