@@ -19,13 +19,7 @@ func TestParseExpressionStatement(t *testing.T) {
 	if !ok {
 		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
 	}
-	ident, ok := stmt.Expression.(*ast.Identifier)
-	if !ok {
-		t.Errorf("stmt.Expression not ast.Identifier. got=%t\n", stmt.Expression)
-	}
-	if got := ident.TokenLiteral(); got != "foo" {
-		t.Errorf("ident.TokenLiteral not 'foo'. got=%q\n", got)
-	}
+	testIdentifier(t, stmt.Expression, "foo")
 }
 
 func TestMultilineExpressionStatement(t *testing.T) {
@@ -195,4 +189,21 @@ func TestOperatorPrecedence(t *testing.T) {
 			t.Errorf("[%d] program.String() not %q. input=%q, got=%q\n", i, test.want, test.input, got)
 		}
 	}
+}
+
+func testIdentifier(t *testing.T, exp ast.Expression, want string) bool {
+	ident, ok := exp.(*ast.Identifier) 
+	if !ok {
+		t.Errorf("exp not ast.Identifier. got=%t.\n", exp)
+		return false
+	}
+	if ident.Value != want {
+		t.Errorf("ident.Value not %q. got=%q.\n", want, ident.Value)
+		return false
+	}
+	if got := ident.TokenLiteral(); got != want {
+		t.Errorf("ident.TokenLiteral() not %q. got=%q.\n", want, got)
+		return false
+	}
+	return true
 }
