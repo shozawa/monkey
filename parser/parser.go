@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/shozawa/monkey/ast"
@@ -28,6 +29,7 @@ type Parser struct {
 	l         *lexer.Lexer
 	curToken  token.Token
 	peekToken token.Token
+	errors    []string
 
 	prefixParseFns map[token.TokenType]prefixParseFn
 	infixParseFns  map[token.TokenType]infixParseFn
@@ -40,6 +42,7 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parserIntegerLiteral)
 
 	return p
 }
@@ -165,12 +168,16 @@ func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
-func (p *Parser) parserIntegerLiteral() *ast.IntegerLiteral {
-	// TODO: error handling
-	i, _ := strconv.Atoi(p.curToken.Literal)
-	integerLiteral := ast.IntegerLiteral{Token: p.curToken, Value: int64(i)}
-	p.nextToken()
-	return &integerLiteral
+func (p *Parser) parserIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.curToken}
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+	lit.Value = value
+	return lit
 }
 
 func (p *Parser) parseBoolLiteral() *ast.BoolLiteral {
