@@ -183,6 +183,9 @@ func TestOperatorPrecedence(t *testing.T) {
 	}{
 		{"1 + 1", "(1 + 1)"},
 		{"1 * 2", "(1 * 2)"},
+		{"1 + 2 + 3", "((1 + 2) + 3)"},
+		{"1 + 2 * 3", "(1 + (2 * 3))"},
+		{"(1 + 2) * 3", "((1 + 2) * 3)"},
 	}
 	for i, test := range tests {
 		l := lexer.New(test.input)
