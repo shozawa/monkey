@@ -20,8 +20,8 @@ const (
 	CALL        // myFunction()
 )
 
-var precedences = map[token.TokenType]int {
-	token.PLUS: SUM,
+var precedences = map[token.TokenType]int{
+	token.PLUS:     SUM,
 	token.ASTERISK: PRODUCT,
 }
 
@@ -50,6 +50,10 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.INT, p.parserIntegerLiteral)
 	p.registerPrefix(token.TRUE, p.parseBoolLiteral)
 	p.registerPrefix(token.FALSE, p.parseBoolLiteral)
+
+	p.infixParseFns = make(map[token.TokenType]infixParseFn)
+	p.registerInfix(token.PLUS, p.parseInfixExpression)
+	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
 
 	return p
 }
@@ -84,40 +88,24 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	return stmt
 }
 
-func (p *Parser) parseExpression() ast.Expression {
-	if p.curToken.Type == token.LPAREN {
-		p.nextToken()
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	prefix := p.prefixParseFns[p.curToken.Type]
+	if prefix == nil {
+		return nil
 	}
-	var left ast.Expression
-	switch p.curToken.Type {
-	case token.IDENT:
-		left = p.parseIdentifier()
-	case token.INT:
-		left = p.parserIntegerLiteral()
-	case token.IF:
-		left = p.parseIfExpression()
-	case token.TRUE, token.FALSE:
-		left = p.parseBoolLiteral()
-	default:
-		left = nil
-	}
-	if p.curToken.Type == token.LPAREN {
-		p.nextToken()
-	}
-	// FIXME
-	if p.curToken.Type == token.PLUS || p.curToken.Type == token.ASTERISK {
-		return p.parseInfix(left)
-	}
-	return left
-}
+	leftExp := prefix()
 
-func (p *Parser) parseInfix(left ast.Expression) *ast.Infix {
-	infix := &ast.Infix{}
-	infix.Token = p.curToken
-	infix.Left = left
-	p.nextToken()
-	infix.Right = p.parseExpression()
-	return infix
+	for !p.peekTokenIs(token.SEMICOLON) && p.peekPrecedence() > precedence {
+		infix := p.infixParseFns[p.peekToken.Type]
+		if infix == nil {
+			return leftExp
+		}
+
+		p.nextToken()
+
+		leftExp = infix(leftExp)
+	}
+	return leftExp
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
