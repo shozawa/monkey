@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/shozawa/monkey/ast"
@@ -47,13 +48,7 @@ func TestParseIntLiteral(t *testing.T) {
 	if !ok {
 		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
 	}
-	integerLiteral, ok := stmt.Expression.(*ast.IntegerLiteral)
-	if !ok {
-		t.Errorf("stmt.Expression not ast.IntegerLiteral. got=%t\n", stmt.Expression)
-	}
-	if integerLiteral.Value != 42 {
-		t.Errorf("integerLiteral.Value not 42. got=%d\n", integerLiteral.Value)
-	}
+	testIntegerLiteral(t, stmt.Expression, 42)
 }
 
 func TestParsePlus(t *testing.T) {
@@ -189,6 +184,22 @@ func TestOperatorPrecedence(t *testing.T) {
 			t.Errorf("[%d] program.String() not %q. input=%q, got=%q\n", i, test.want, test.input, got)
 		}
 	}
+}
+
+func testIntegerLiteral(t *testing.T, exp ast.Expression, want int64) bool {
+	lit, ok := exp.(*ast.IntegerLiteral)
+	if !ok {
+		t.Errorf("lit not ast.IntegerLIteral. got=%t.\n", exp)
+		return false
+	}
+	if lit.Value != want {
+		t.Errorf("lit.Value not %d. got=%d.\n", want, lit.Value)
+		return false
+	}
+	if got := lit.TokenLiteral(); got != fmt.Sprintf("%d", want) {
+		t.Errorf("lit.TokenLiteral() not %d. got=%s.\n", want, got)
+	}
+	return true
 }
 
 func testIdentifier(t *testing.T, exp ast.Expression, want string) bool {
