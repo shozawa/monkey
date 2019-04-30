@@ -108,9 +108,10 @@ func (b *BoolLiteral) String() string {
 }
 
 type Infix struct {
-	Token token.Token
-	Left  Expression
-	Right Expression
+	Token    token.Token
+	Operator string
+	Left     Expression
+	Right    Expression
 }
 
 func (i *Infix) expressionNode() {}
