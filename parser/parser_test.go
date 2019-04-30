@@ -192,7 +192,7 @@ func TestOperatorPrecedence(t *testing.T) {
 }
 
 func testIdentifier(t *testing.T, exp ast.Expression, want string) bool {
-	ident, ok := exp.(*ast.Identifier) 
+	ident, ok := exp.(*ast.Identifier)
 	if !ok {
 		t.Errorf("exp not ast.Identifier. got=%t.\n", exp)
 		return false
