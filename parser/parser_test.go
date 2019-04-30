@@ -9,46 +9,28 @@ import (
 )
 
 func TestParseExpressionStatement(t *testing.T) {
-	input := "foo;"
-	l := lexer.New(input)
-	p := New(l)
-	program := p.Parse()
-	if got := len(program.Statements); got != 1 {
-		t.Errorf("len(program.Statements) not 1 got=%d\n", got)
+	tests := []struct {
+		input string
+		want  interface{}
+	}{
+		{"foo", "foo"},
+		{"foo;", "foo"},
+		{"42", 42},
+		{"42;", 42},
 	}
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
-	if !ok {
-		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
+	for _, test := range tests {
+		l := lexer.New(test.input)
+		p := New(l)
+		program := p.Parse()
+		if got := len(program.Statements); got != 1 {
+			t.Errorf("len(program.Statements) not 1 got=%d\n", got)
+		}
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
+		}
+		testLiteralExpression(t, stmt.Expression, test.want)
 	}
-	testIdentifier(t, stmt.Expression, "foo")
-}
-
-func TestMultilineExpressionStatement(t *testing.T) {
-	input := `
-	foo;
-	bar;
-	`
-	l := lexer.New(input)
-	p := New(l)
-	program := p.Parse()
-	if got := len(program.Statements); got != 2 {
-		t.Errorf("len(program.Statements) not 2. got=%d\n", got)
-	}
-}
-
-func TestParseIntLiteral(t *testing.T) {
-	input := "42;"
-	l := lexer.New(input)
-	p := New(l)
-	program := p.Parse()
-	if got := len(program.Statements); got != 1 {
-		t.Errorf("len(program.Statements) not 1. got=%d\n", got)
-	}
-	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
-	if !ok {
-		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t\n", program.Statements[0])
-	}
-	testIntegerLiteral(t, stmt.Expression, 42)
 }
 
 func TestParsePlus(t *testing.T) {
@@ -184,6 +166,16 @@ func TestOperatorPrecedence(t *testing.T) {
 			t.Errorf("[%d] program.String() not %q. input=%q, got=%q\n", i, test.want, test.input, got)
 		}
 	}
+}
+
+func testLiteralExpression(t *testing.T, exp ast.Expression, want interface{}) bool {
+	switch v := want.(type) {
+	case int64:
+		return testIntegerLiteral(t, exp, v)
+	case string:
+		return testIdentifier(t, exp, v)
+	}
+	return false
 }
 
 func testIntegerLiteral(t *testing.T, exp ast.Expression, want int64) bool {
