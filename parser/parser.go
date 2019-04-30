@@ -69,8 +69,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	default:
 		// TODO: report parse error
 		p.nextToken()
-		panic("parseStatement error")
-		// return nil
+		// panic("parseStatement error")
+		return nil
 	}
 }
 
@@ -123,20 +123,20 @@ func (p *Parser) parseInfix(left ast.Expression) *ast.Infix {
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
-	letStmt := ast.LetStatement{Token: p.curToken}
-	p.nextToken()
-	letStmt.Name = p.parseIdentifier()
-	// skip assignment
-	p.nextToken()
-	if p.curToken.Type == token.INT {
-		letStmt.Value = p.parserIntegerLiteral()
-	} else {
-		// skip Value
+	letStmt := &ast.LetStatement{Token: p.curToken}
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	letStmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+	p.nextToken() // consume ASSIGN
+	letStmt.Value = p.parseExpression(LOWEST)
+	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
-	// skip semicolon
-	p.nextToken()
-	return &letStmt
+	return letStmt
 }
 
 func (p *Parser) parseIfExpression() *ast.IfExpression {
@@ -201,4 +201,13 @@ func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 
 func (p *Parser) peekTokenIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
+}
+
+func (p *Parser) expectPeek(tokeType token.TokenType) bool {
+	if p.peekToken.Type == tokeType {
+		p.nextToken()
+		return true
+	} else {
+		return false
+	}
 }
