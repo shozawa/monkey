@@ -54,6 +54,7 @@ func (p *Parser) Parse() (prog ast.Program) {
 		if stmt := p.parseStatement(); stmt != nil {
 			prog.Statements = append(prog.Statements, stmt)
 		}
+		p.nextToken()
 	}
 	return
 }
@@ -62,15 +63,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
-	// Expression Statement
-	// TODO: refactor
-	case token.IDENT, token.INT, token.IF, token.LPAREN, token.TRUE, token.FALSE:
-		return p.parserExpressionStatement()
 	default:
-		// TODO: report parse error
-		p.nextToken()
-		// panic("parseStatement error")
-		return nil
+		return p.parserExpressionStatement()
 	}
 }
 
