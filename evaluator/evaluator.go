@@ -60,6 +60,15 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			}
 			integer.Value = left.Value + right.Value
 			return integer
+		case token.ASTERISK:
+			integer := &object.Integer{}
+			left, ok := Eval(node.Left, env).(*object.Integer)
+			right, ok := Eval(node.Right, env).(*object.Integer)
+			if !ok {
+				// TODO: report error
+			}
+			integer.Value = left.Value * right.Value
+			return integer
 		}
 	}
 	return nil
