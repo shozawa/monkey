@@ -10,6 +10,7 @@ type Token struct {
 var keywords = map[string]TokenType{
 	"let":   LET,
 	"if":    IF,
+	"fn":    FUNCTION,
 	"else":  ELSE,
 	"true":  TRUE,
 	"false": FALSE,
@@ -22,8 +23,8 @@ const (
 	IDENT = "IDENT"
 	INT   = "INT"
 
-	ASSIGN = "ASSIGN"
-	PLUS   = "PLUS"
+	ASSIGN   = "ASSIGN"
+	PLUS     = "PLUS"
 	ASTERISK = "ASTERISK"
 
 	COMMA     = "COMMA"
