@@ -14,16 +14,27 @@ const (
 	FUNCTION_OBJ = "FUNCTION"
 )
 
+func NewEnclosedEnvironment(outer *Environment) *Environment {
+	env := NewEnv()
+	env.outer = outer
+	return env
+}
+
 type Environment struct {
 	store map[string]Object
+	outer *Environment
 }
 
 func (e *Environment) Set(k string, v Object) {
 	e.store[k] = v
 }
 
-func (e *Environment) Get(k string) Object {
-	return e.store[k]
+func (e *Environment) Get(k string) (Object, bool) {
+	obj, ok := e.store[k]
+	if !ok && e.outer != nil {
+		obj, ok = e.outer.Get(k)
+	}
+	return obj, ok
 }
 
 func NewEnv() *Environment {
