@@ -81,6 +81,19 @@ func TestFunctionObject(t *testing.T) {
 	// TODO
 }
 
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input string
+		want  int64
+	}{
+		{"let identity = fn(x) { x; }; identity(5);", 5},
+	}
+	for _, test := range tests {
+		obj := testEval(test.input)
+		testIntegerObject(t, obj, test.want)
+	}
+}
+
 func testEval(input string) object.Object {
 	l := lexer.New(input)
 	p := parser.New(l)
