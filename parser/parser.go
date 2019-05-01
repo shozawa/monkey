@@ -129,10 +129,46 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 }
 
 func (p *Parser) parseFunctionLiteral() ast.Expression {
+	fn := &ast.FunctionLiteral{Token: p.curToken}
+	p.nextToken() // consume fn
+
+	fn.Parameters = p.parserFunctionParameters()
+
+	p.nextToken() // consume ')'
+
 	for !p.curTokenIs(token.RBRACE) {
 		p.nextToken()
 	}
-	return &ast.FunctionLiteral{}
+	return fn
+}
+
+func (p *Parser) parserFunctionParameters() []*ast.Identifier {
+	var params []*ast.Identifier
+
+	p.nextToken() // consume '('
+
+	ident, ok := p.parseIdentifier().(*ast.Identifier)
+	if !ok {
+		return nil
+	}
+	params = append(params, ident)
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken() // consume IDNT
+		p.nextToken() // consume ','
+
+		ident, ok := p.parseIdentifier().(*ast.Identifier)
+		if !ok {
+			return nil
+		}
+		params = append(params, ident)
+	}
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return params
 }
 
 func (p *Parser) parseIfExpression() ast.Expression {

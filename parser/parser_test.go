@@ -68,6 +68,18 @@ func TestParseFunctionLiteral(t *testing.T) {
 	if got := len(program.Statements); got != 1 {
 		t.Errorf("len(program.Statements) not 1. got=%d.\n", got)
 	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t.\n", program.Statements[0])
+	}
+	fn, ok := stmt.Expression.(*ast.FunctionLiteral)
+	if !ok {
+		t.Errorf("stmt.Expression not ast.FunctionLiteral. got=%t.\n", stmt.Expression)
+	}
+	if got := len(fn.Parameters); got != 2 {
+		t.Errorf("len(fn.Parameters) not 2. got=%d.\n", got)
+	}
+
 }
 
 func TestParseLetStatement(t *testing.T) {
