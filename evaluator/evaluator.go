@@ -22,7 +22,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
 	case *ast.Identifier:
-		return env.Get(node.Value)
+		value, ok := env.Get(node.Value)
+		if !ok {
+			return nil
+		}
+		return value
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.BoolLiteral:
@@ -53,6 +57,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		params := node.Parameters
 		body := node.Body
 		return &object.Function{Parameters: params, Body: body, Env: env}
+	case *ast.CallExpression:
+		function := Eval(node.Function, env)
+		args := evalExpressions(node.Arguments, env)
+		return applyFunction(function, args)
 	case *ast.Infix:
 		switch node.Token.Type {
 		case token.PLUS:
@@ -89,4 +97,26 @@ func evalExpressions(
 		result = append(result, evaluated)
 	}
 	return result
+}
+
+func applyFunction(fn object.Object, args []object.Object) object.Object {
+	function, ok := fn.(*object.Function)
+	if !ok {
+		return nil
+	}
+	extendEnv := extendFunctionEnv(function, args)
+	return Eval(function.Body, extendEnv)
+}
+
+func extendFunctionEnv(
+	fn *object.Function,
+	args []object.Object,
+) *object.Environment {
+	env := object.NewEnclosedEnvironment(fn.Env)
+
+	for paramIdx, param := range fn.Parameters {
+		env.Set(param.Value, args[paramIdx])
+	}
+
+	return env
 }
