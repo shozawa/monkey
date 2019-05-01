@@ -136,9 +136,7 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 
 	p.nextToken() // consume ')'
 
-	for !p.curTokenIs(token.RBRACE) {
-		p.nextToken()
-	}
+	fn.Body = p.parseBlockStatement()
 	return fn
 }
 

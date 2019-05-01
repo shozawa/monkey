@@ -113,6 +113,18 @@ func TestParseFunctionLiteral(t *testing.T) {
 		t.Errorf("len(fn.Parameters) not 2. got=%d.\n", got)
 	}
 
+	// test params
+	testIdentifier(t, fn.Parameters[0], "x")
+	testIdentifier(t, fn.Parameters[1], "y")
+
+	if got := len(fn.Body.Statements); got != 1 {
+		t.Errorf("len(fn.Body.Statements) not 1. got=%d.\n", got)
+	}
+	stmt, ok = fn.Body.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("fn.Body.Statements[0] not ast.ExpressionStatement. got=%t.\n", fn.Body.Statements[0])
+	}
+	testInfixExpression(t, stmt.Expression, "x", "+", "y")
 }
 
 func TestParseLetStatement(t *testing.T) {
