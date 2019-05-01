@@ -11,13 +11,7 @@ import (
 func TestEval(t *testing.T) {
 	input := "5;"
 	o := testEval(input)
-	integer, ok := o.(*object.Integer)
-	if !ok {
-		t.Errorf("o not Integer. got=%t\n", o)
-	}
-	if integer.Value != 5 {
-		t.Errorf("integer.Value not 5. got=%d", integer.Value)
-	}
+	testIntegerObject(t, o, 5)
 }
 
 func TestEvalBoolLiteral(t *testing.T) {
@@ -92,4 +86,21 @@ func testEval(input string) object.Object {
 	p := parser.New(l)
 	program := p.Parse()
 	return Eval(&program, object.NewEnv())
+}
+
+func testIntegerObject(
+	t *testing.T,
+	obj object.Object,
+	want int64,
+) bool {
+	integer, ok := obj.(*object.Integer)
+	if !ok {
+		t.Errorf("object is not IntegerObject. got=%t.\t", obj)
+		return false
+	}
+	if integer.Value != want {
+		t.Errorf("integer.Value not %d. got=%d.\n", want, integer.Value)
+		return false
+	}
+	return true
 }
