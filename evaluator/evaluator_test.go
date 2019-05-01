@@ -88,3 +88,19 @@ func TestEvalPlus(t *testing.T) {
 		t.Errorf("integer.Value not 7. got=%d", integer.Value)
 	}
 }
+
+func TestFunctionObject(t *testing.T) {
+	input := "fn(x) { x + 2; };"
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.Parse()
+	evaluated := Eval(&program, object.NewEnv())
+	fn, ok := evaluated.(*object.Function)
+	if !ok {
+		t.Errorf("object is not Function. got=%T (%+v).\n", evaluated, evaluated)
+	}
+	if len(fn.Parameters) != 1 {
+		t.Errorf("function has wrong parameters. Parameters=%+v", fn.Parameters)
+	}
+	// TODO
+}

@@ -1,12 +1,17 @@
 package object
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/shozawa/monkey/ast"
+)
 
 type ObjectType string
 
 const (
-	INTEGER_OBJ = "INTEGER"
-	BOOL_OBJ    = "BOOL"
+	INTEGER_OBJ  = "INTEGER"
+	BOOL_OBJ     = "BOOL"
+	FUNCTION_OBJ = "FUNCTION"
 )
 
 type Environment struct {
@@ -44,3 +49,12 @@ type Bool struct {
 
 func (b *Bool) Type() ObjectType { return BOOL_OBJ }
 func (b *Bool) Inspect() string  { return fmt.Sprintf("%v", b.Value) }
+
+type Function struct {
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Environment
+}
+
+func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
+func (f *Function) Inspect() string  { return "TODO" }

@@ -49,6 +49,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		} else {
 			return Eval(node.Alternative, env)
 		}
+	case *ast.FunctionLiteral:
+		params := node.Parameters
+		body := node.Body
+		return &object.Function{Parameters: params, Body: body, Env: env}
 	case *ast.Infix:
 		switch node.Token.Type {
 		case token.PLUS:
