@@ -127,6 +127,33 @@ func TestParseFunctionLiteral(t *testing.T) {
 	testInfixExpression(t, stmt.Expression, "x", "+", "y")
 }
 
+func TestCallExpression(t *testing.T) {
+	input := "add(1, 2 + 3, 4 * 5);"
+	l := lexer.New(input)
+	p := New(l)
+	program := p.Parse()
+	if got := len(program.Statements); got != 1 {
+		t.Errorf("len(program.Statements) not 1. got=%d.\n", got)
+	}
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%t.\n", program.Statements[0])
+	}
+	call, ok := stmt.Expression.(*ast.CallExpression)
+	if !ok {
+		t.Errorf("stmt.Expression not ast.CallExpression. got=%t.\n", stmt.Expression)
+	}
+	if testIdentifier(t, call.Function, "add") {
+		return
+	}
+	if got := len(call.Arguments); got != 3 {
+		t.Errorf("len(call.Arguments) not 3. got=%d.\n", got)
+	}
+	testLiteralExpression(t, call.Arguments[0], 1)
+	testInfixExpression(t, call.Arguments[1], 2, "+", 3)
+	testInfixExpression(t, call.Arguments[2], 4, "*", 5)
+}
+
 func TestParseLetStatement(t *testing.T) {
 	input := `
 	let five = 5;
