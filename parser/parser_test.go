@@ -60,6 +60,36 @@ func TestParseInfixExpression(t *testing.T) {
 
 }
 
+func TestParseFunctionParameters(t *testing.T) {
+	tests := []struct {
+		input string
+		len   int
+	}{
+		{"fn() {}", 0},
+		{"fn(x) {}", 1},
+		{"fn(x, y) {}", 2},
+	}
+	for _, test := range tests {
+		l := lexer.New(test.input)
+		p := New(l)
+		program := p.Parse()
+		if got := len(program.Statements); got != 1 {
+			t.Errorf("len(program.Statements) not 1. got=%d.\n", got)
+		}
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Errorf("program.Statements[0] not ExpressionStatement. got=%t.\n", program.Statements[0])
+		}
+		fn, ok := stmt.Expression.(*ast.FunctionLiteral)
+		if !ok {
+			t.Errorf("stmt.Expression not ast.FunctionLiteral. got=%t.\n", stmt.Expression)
+		}
+		if got := len(fn.Parameters); got != test.len {
+			t.Errorf("len(fn.Parameters) not %d. got=%d.\n", test.len, got)
+		}
+	}
+}
+
 func TestParseFunctionLiteral(t *testing.T) {
 	input := "fn(x, y) { x + y; }"
 	l := lexer.New(input)
