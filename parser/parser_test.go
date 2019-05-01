@@ -143,9 +143,7 @@ func TestCallExpression(t *testing.T) {
 	if !ok {
 		t.Errorf("stmt.Expression not ast.CallExpression. got=%t.\n", stmt.Expression)
 	}
-	if testIdentifier(t, call.Function, "add") {
-		return
-	}
+	testIdentifier(t, call.Function, "add")
 	if got := len(call.Arguments); got != 3 {
 		t.Errorf("len(call.Arguments) not 3. got=%d.\n", got)
 	}
