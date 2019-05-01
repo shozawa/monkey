@@ -87,6 +87,7 @@ func TestFunctionApplication(t *testing.T) {
 		want  int64
 	}{
 		{"let identity = fn(x) { x; }; identity(5);", 5},
+		{"let STEP = 10; let plus = fn(n) { n + STEP }; plus(2);", 12},
 	}
 	for _, test := range tests {
 		obj := testEval(test.input)
