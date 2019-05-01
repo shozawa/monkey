@@ -10,10 +10,7 @@ import (
 
 func TestEval(t *testing.T) {
 	input := "5;"
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.Parse()
-	o := Eval(&program, nil)
+	o := testEval(input)
 	integer, ok := o.(*object.Integer)
 	if !ok {
 		t.Errorf("o not Integer. got=%t\n", o)
@@ -25,10 +22,7 @@ func TestEval(t *testing.T) {
 
 func TestEvalBoolLiteral(t *testing.T) {
 	input := "true;"
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.Parse()
-	o := Eval(&program, nil)
+	o := testEval(input)
 	b, ok := o.(*object.Bool)
 	if !ok {
 		t.Errorf("o not Bool. got=%t\n", o)
@@ -40,10 +34,7 @@ func TestEvalBoolLiteral(t *testing.T) {
 
 func TestEvalIfExpression(t *testing.T) {
 	input := "if (false) { 1 } else { 2 };"
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.Parse()
-	o := Eval(&program, nil)
+	o := testEval(input)
 	integer, ok := o.(*object.Integer)
 	if !ok {
 		t.Errorf("o not Integer. got=%t\n", o)
@@ -58,10 +49,7 @@ func TestEvalLetStatement(t *testing.T) {
 	let five = 5;
 	five;
 	`
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.Parse()
-	o := Eval(&program, object.NewEnv())
+	o := testEval(input)
 	integer, ok := o.(*object.Integer)
 	if !ok {
 		t.Errorf("o not Integer. got=%t\n", o)
@@ -76,10 +64,7 @@ func TestEvalPlus(t *testing.T) {
 	let two = 2;
 	five + two;
 	`
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.Parse()
-	o := Eval(&program, object.NewEnv())
+	o := testEval(input)
 	integer, ok := o.(*object.Integer)
 	if !ok {
 		t.Errorf("o not Integer. got=%t\n", o)
@@ -91,10 +76,7 @@ func TestEvalPlus(t *testing.T) {
 
 func TestFunctionObject(t *testing.T) {
 	input := "fn(x) { x + 2; };"
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.Parse()
-	evaluated := Eval(&program, object.NewEnv())
+	evaluated := testEval(input)
 	fn, ok := evaluated.(*object.Function)
 	if !ok {
 		t.Errorf("object is not Function. got=%T (%+v).\n", evaluated, evaluated)
@@ -103,4 +85,11 @@ func TestFunctionObject(t *testing.T) {
 		t.Errorf("function has wrong parameters. Parameters=%+v", fn.Parameters)
 	}
 	// TODO
+}
+
+func testEval(input string) object.Object {
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.Parse()
+	return Eval(&program, object.NewEnv())
 }
