@@ -11,11 +11,7 @@ import (
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 	case *ast.Program:
-		var result object.Object
-		for _, stmt := range node.Statements {
-			result = Eval(stmt, env)
-		}
-		return result
+		return evalStatements(node.Statements, env)
 	case *ast.LetStatement:
 		env.Set(node.Name.Value, Eval(node.Value, env))
 		return nil
@@ -84,6 +80,16 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 	}
 	return nil
+}
+
+func evalStatements(stmts []ast.Statement, env *object.Environment) object.Object {
+	var result object.Object
+
+	for _, stmt := range stmts {
+		result = Eval(stmt, env)
+	}
+
+	return result
 }
 
 func evalExpressions(
