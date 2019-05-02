@@ -164,7 +164,7 @@ func TestParseLetStatement(t *testing.T) {
 		{name: "five", value: 5},
 		{name: "ten", value: 10},
 	}
-	program := testParse(input)
+	program := testParse(t, input)
 	for i, test := range tests {
 		s := program.Statements[i]
 		testLetStatment(t, s, test.name, test.value)
@@ -173,7 +173,7 @@ func TestParseLetStatement(t *testing.T) {
 
 func TestParseReturnStatement(t *testing.T) {
 	input := "return 10;"
-	program := testParse(input)
+	program := testParse(t, input)
 	if got := len(program.Statements); got != 1 {
 		t.Errorf("len(program.Statements) not 1. got=%d", got)
 	}
@@ -338,8 +338,23 @@ func testIdentifier(t *testing.T, exp ast.Expression, want string) bool {
 	return true
 }
 
-func testParse(input string) ast.Program {
+func testParse(t *testing.T, input string) ast.Program {
 	l := lexer.New(input)
 	p := New(l)
-	return p.Parse()
+	program := p.Parse()
+	checkParserErrors(t, p)
+	return program
+}
+
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	if len(errors) == 0 {
+		return
+	}
+
+	t.Errorf("parser has %d errors", len(errors))
+	for _, msg := range errors {
+		t.Errorf("parser error: %q", msg)
+	}
+	t.FailNow()
 }
