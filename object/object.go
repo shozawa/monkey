@@ -12,6 +12,7 @@ const (
 	INTEGER_OBJ  = "INTEGER"
 	BOOL_OBJ     = "BOOL"
 	FUNCTION_OBJ = "FUNCTION"
+	NULL_OBJ     = "NULL"
 )
 
 func NewEnclosedEnvironment(outer *Environment) *Environment {
@@ -69,3 +70,8 @@ type Function struct {
 
 func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
 func (f *Function) Inspect() string  { return "TODO" }
+
+type Null struct{}
+
+func (n *Null) Type() ObjectType { return NULL_OBJ }
+func (n *Null) Inspect() string  { return "null" }
