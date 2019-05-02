@@ -16,6 +16,11 @@ func TestEvalIntegerExpression(t *testing.T) {
 		{"5;", 5},
 		{"5;", 5},
 		{"42", 42},
+		{"1 + 1;", 2},
+		{"1 + 2 + 3;", 6},
+		{"1 + 2 * 3", 7},
+		{"(1 + 2) * 3", 9},
+		{"2 * ((1 + 2) * 3)", 18},
 	}
 	for _, test := range tests {
 		evaluated := testEval(test.input)
