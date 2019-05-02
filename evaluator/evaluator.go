@@ -37,17 +37,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return result
 	case *ast.IfExpression:
-		obj := Eval(node.Condition, env)
-		b, ok := obj.(*object.Bool)
-		if !ok {
-			// TODO: report error if condition is not bool
-			return nil
-		}
-		if b.Value {
-			return Eval(node.Consequence, env)
-		} else {
-			return Eval(node.Alternative, env)
-		}
+		return evalIfExpression(node, env)
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
@@ -115,6 +105,17 @@ func evalIntegerInfixExpression(
 	}
 }
 
+func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
+	condition := Eval(ie.Condition, env)
+	if isTruthy(condition) {
+		return Eval(ie.Consequence, env)
+	} else if ie.Alternative != nil {
+		return Eval(ie.Alternative, env)
+	} else {
+		return NULL
+	}
+}
+
 func applyFunction(fn object.Object, args []object.Object) object.Object {
 	function, ok := fn.(*object.Function)
 	if !ok {
@@ -142,5 +143,18 @@ func strToBoolObject(str string) *object.Bool {
 		return TRUE
 	} else {
 		return FALSE
+	}
+}
+
+func isTruthy(obj object.Object) bool {
+	switch obj {
+	case NULL:
+		return false
+	case TRUE:
+		return true
+	case FALSE:
+		return false
+	default:
+		return true
 	}
 }

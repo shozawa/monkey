@@ -55,6 +55,26 @@ func TestEvalIfExpression(t *testing.T) {
 	}
 }
 
+func TestIfElseExpression(t *testing.T) {
+	tests := []struct {
+		input string
+		want  interface{}
+	}{
+		{"if (true) { 10 }", 10},
+		{"if (false) { 10 }", nil},
+		{"if (1) { 10 }", 10},
+	}
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		integer, ok := test.want.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(integer))
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
+}
+
 func TestEvalLetStatement(t *testing.T) {
 	input := `
 	let five = 5;
@@ -148,6 +168,17 @@ func testBoolObject(
 	}
 	if boolObj.Value != want {
 		t.Errorf("boolObj.Value not %t. got=%t.\n", want, boolObj.Value)
+		return false
+	}
+	return true
+}
+
+func testNullObject(
+	t *testing.T,
+	obj object.Object,
+) bool {
+	if obj != NULL {
+		t.Errorf("object is not Null. got=%T (%+v)", obj, obj)
 		return false
 	}
 	return true
