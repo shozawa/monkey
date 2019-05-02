@@ -330,12 +330,12 @@ func (p *Parser) curTokenIs(tokenType token.TokenType) bool {
 	return p.curToken.Type == tokenType
 }
 
-func (p *Parser) expectPeek(tokeType token.TokenType) bool {
-	if p.peekToken.Type == tokeType {
+func (p *Parser) expectPeek(tokenType token.TokenType) bool {
+	if p.peekToken.Type == tokenType {
 		p.nextToken()
 		return true
 	} else {
-		p.peekError(tokeType)
+		p.peekError(tokenType)
 		return false
 	}
 }
