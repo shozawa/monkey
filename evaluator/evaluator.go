@@ -1,11 +1,14 @@
 package evaluator
 
 import (
-	"strconv"
-
 	"github.com/shozawa/monkey/ast"
 	"github.com/shozawa/monkey/object"
 	"github.com/shozawa/monkey/token"
+)
+
+var (
+	TRUE  = &object.Bool{Value: true}
+	FALSE = &object.Bool{Value: false}
 )
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
@@ -26,11 +29,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.BoolLiteral:
-		b, err := strconv.ParseBool(node.Value)
-		if err != nil {
-			return nil
-		}
-		return &object.Bool{Value: b}
+		return strToBoolObject(node.Value)
 	case *ast.BlockStatement:
 		var result object.Object
 		for _, stmt := range node.Statements {
@@ -125,4 +124,12 @@ func extendFunctionEnv(
 	}
 
 	return env
+}
+
+func strToBoolObject(str string) *object.Bool {
+	if str == "true" {
+		return TRUE
+	} else {
+		return FALSE
+	}
 }
