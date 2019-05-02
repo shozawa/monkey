@@ -56,6 +56,19 @@ func (l *LetStatement) String() string {
 	return fmt.Sprintf("let %v = %v;", l.Name.String(), l.Value.String())
 }
 
+type ReturnStatement struct {
+	Token       token.Token
+	ReturnValue Expression
+}
+
+func (r *ReturnStatement) statementNode() {}
+func (r *ReturnStatement) TokenLiteral() string {
+	return r.Token.Literal
+}
+func (r *ReturnStatement) String() string {
+	return "TODO"
+}
+
 type ExpressionStatement struct {
 	Expression Expression
 }

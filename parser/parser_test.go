@@ -171,6 +171,21 @@ func TestParseLetStatement(t *testing.T) {
 	}
 }
 
+func TestParseReturnStatement(t *testing.T) {
+	input := "return 10;"
+	program := testParse(input)
+	if got := len(program.Statements); got != 1 {
+		t.Errorf("len(program.Statements) not 1. got=%d", got)
+	}
+	stmt, ok := program.Statements[0].(*ast.ReturnStatement)
+	if !ok {
+		t.Errorf("program.Statements[0] is not ast.ReturnStatement. got=%T", program.Statements[0])
+	}
+	if stmt.TokenLiteral() != "return" {
+		t.Errorf("stmt.TokenLiteral() is not 'return'. got=%q", stmt.TokenLiteral())
+	}
+}
+
 func testLetStatment(t *testing.T, s ast.Statement, name string, value int64) bool {
 	if literal := s.TokenLiteral(); literal != "let" {
 		t.Errorf("s.TokenLiteral not 'let'. got=%q", literal)

@@ -8,20 +8,22 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"let":   LET,
-	"if":    IF,
-	"fn":    FUNCTION,
-	"else":  ELSE,
-	"true":  TRUE,
-	"false": FALSE,
+	"let":    LET,
+	"return": RETURN,
+	"if":     IF,
+	"fn":     FUNCTION,
+	"else":   ELSE,
+	"true":   TRUE,
+	"false":  FALSE,
 }
 
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDENT = "IDENT"
-	INT   = "INT"
+	IDENT  = "IDENT"
+	INT    = "INT"
+	RETURN = "RETURN"
 
 	ASSIGN   = "ASSIGN"
 	PLUS     = "PLUS"
