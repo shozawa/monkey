@@ -3,7 +3,6 @@ package evaluator
 import (
 	"github.com/shozawa/monkey/ast"
 	"github.com/shozawa/monkey/object"
-	"github.com/shozawa/monkey/token"
 )
 
 var (
@@ -58,26 +57,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		args := evalExpressions(node.Arguments, env)
 		return applyFunction(function, args)
 	case *ast.Infix:
-		switch node.Token.Type {
-		case token.PLUS:
-			integer := &object.Integer{}
-			left, ok := Eval(node.Left, env).(*object.Integer)
-			right, ok := Eval(node.Right, env).(*object.Integer)
-			if !ok {
-				// TODO: report error
-			}
-			integer.Value = left.Value + right.Value
-			return integer
-		case token.ASTERISK:
-			integer := &object.Integer{}
-			left, ok := Eval(node.Left, env).(*object.Integer)
-			right, ok := Eval(node.Right, env).(*object.Integer)
-			if !ok {
-				// TODO: report error
-			}
-			integer.Value = left.Value * right.Value
-			return integer
-		}
+		left := Eval(node.Left, env)
+		right := Eval(node.Right, env)
+		return evalInfixExpression(node.Operator, left, right)
 	}
 	return nil
 }
@@ -103,6 +85,34 @@ func evalExpressions(
 		result = append(result, evaluated)
 	}
 	return result
+}
+
+func evalInfixExpression(
+	operator string,
+	left, right object.Object,
+) object.Object {
+	switch {
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalIntegerInfixExpression(operator, left, right)
+	default:
+		return NULL
+	}
+}
+
+func evalIntegerInfixExpression(
+	operator string,
+	left, right object.Object,
+) object.Object {
+	leftVal := left.(*object.Integer).Value
+	rightVal := right.(*object.Integer).Value
+	switch operator {
+	case "+":
+		return &object.Integer{Value: leftVal + rightVal}
+	case "*":
+		return &object.Integer{Value: leftVal * rightVal}
+	default:
+		return NULL
+	}
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
