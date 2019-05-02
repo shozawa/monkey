@@ -164,9 +164,7 @@ func TestParseLetStatement(t *testing.T) {
 		{name: "five", value: 5},
 		{name: "ten", value: 10},
 	}
-	l := lexer.New(input)
-	p := New(l)
-	program := p.Parse()
+	program := testParse(input)
 	for i, test := range tests {
 		s := program.Statements[i]
 		testLetStatment(t, s, test.name, test.value)
@@ -323,4 +321,10 @@ func testIdentifier(t *testing.T, exp ast.Expression, want string) bool {
 		return false
 	}
 	return true
+}
+
+func testParse(input string) ast.Program {
+	l := lexer.New(input)
+	p := New(l)
+	return p.Parse()
 }
