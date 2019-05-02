@@ -9,6 +9,7 @@ import (
 var (
 	TRUE  = &object.Bool{Value: true}
 	FALSE = &object.Bool{Value: false}
+	NULL  = &object.Null{}
 )
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
