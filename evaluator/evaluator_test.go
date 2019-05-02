@@ -118,7 +118,7 @@ func testIntegerObject(
 ) bool {
 	integer, ok := obj.(*object.Integer)
 	if !ok {
-		t.Errorf("object is not IntegerObject. got=%t.\t", obj)
+		t.Errorf("object is not IntegerObject. got=%T (%+v).\t", obj, obj)
 		return false
 	}
 	if integer.Value != want {
