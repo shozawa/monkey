@@ -8,10 +8,19 @@ import (
 	"github.com/shozawa/monkey/parser"
 )
 
-func TestEval(t *testing.T) {
-	input := "5;"
-	o := testEval(input)
-	testIntegerObject(t, o, 5)
+func TestEvalIntegerExpression(t *testing.T) {
+	tests := []struct {
+		input string
+		want  int64
+	}{
+		{"5;", 5},
+		{"5;", 5},
+		{"42", 42},
+	}
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		testIntegerObject(t, evaluated, test.want)
+	}
 }
 
 func TestEvalBoolLiteral(t *testing.T) {
