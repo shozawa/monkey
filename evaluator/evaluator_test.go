@@ -23,15 +23,18 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}
 }
 
-func TestEvalBoolLiteral(t *testing.T) {
-	input := "true;"
-	o := testEval(input)
-	b, ok := o.(*object.Bool)
-	if !ok {
-		t.Errorf("o not Bool. got=%t\n", o)
+func TestEvalBoolExpression(t *testing.T) {
+	tests := []struct {
+		input string
+		want  bool
+	}{
+		{"true;", true},
+		{"true", true},
+		{"false;", false},
 	}
-	if b.Value != true {
-		t.Errorf("b.Value not true. got=%v", b.Value)
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		testBoolObject(t, evaluated, test.want)
 	}
 }
 
@@ -118,11 +121,28 @@ func testIntegerObject(
 ) bool {
 	integer, ok := obj.(*object.Integer)
 	if !ok {
-		t.Errorf("object is not IntegerObject. got=%T (%+v).\t", obj, obj)
+		t.Errorf("object is not IntegerObject. got=%T (%+v).\n", obj, obj)
 		return false
 	}
 	if integer.Value != want {
 		t.Errorf("integer.Value not %d. got=%d.\n", want, integer.Value)
+		return false
+	}
+	return true
+}
+
+func testBoolObject(
+	t *testing.T,
+	obj object.Object,
+	want bool,
+) bool {
+	boolObj, ok := obj.(*object.Bool)
+	if !ok {
+		t.Errorf("object is not BoolObject. got=%T (%+v).\n", obj, obj)
+		return false
+	}
+	if boolObj.Value != want {
+		t.Errorf("boolObj.Value not %t. got=%t.\n", want, boolObj.Value)
 		return false
 	}
 	return true
