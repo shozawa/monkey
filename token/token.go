@@ -29,6 +29,7 @@ const (
 	PLUS     = "PLUS"
 	MINUS    = "MINUS"
 	ASTERISK = "ASTERISK"
+	SLASH    = "SLASH"
 
 	COMMA     = "COMMA"
 	SEMICOLON = "SEMICOLON"
