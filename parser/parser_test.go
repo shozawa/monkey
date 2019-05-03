@@ -33,6 +33,39 @@ func TestParseExpressionStatement(t *testing.T) {
 	}
 }
 
+func TestParsePrefixExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		operator string
+		right    int64
+	}{
+		{"-5;", "-", 5},
+		{"!5;", "!", 5},
+	}
+	for _, test := range tests {
+		l := lexer.New(test.input)
+		p := New(l)
+		program := p.Parse()
+		checkParserErrors(t, p)
+		if got := len(program.Statements); got != 1 {
+			t.Errorf("len(program.Statements) not 1. got=%d", got)
+		}
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Errorf("program.Statements[0] not ast.ExpressionStatement. got=%T", program.Statements[0])
+		}
+		prefix, ok := stmt.Expression.(*ast.PrefixExpression)
+		if !ok {
+			t.Errorf("stmt.Expression not ast.PrefixExpression. got=%T", stmt.Expression)
+		}
+		if prefix.Operator != test.operator {
+			t.Errorf("prefix.Operator not %s. got=%s", test.operator, prefix.Operator)
+		}
+		testIntegerLiteral(t, prefix.Right, test.right)
+	}
+
+}
+
 func TestParseInfixExpression(t *testing.T) {
 	tests := []struct {
 		input string
