@@ -18,10 +18,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.Program:
 		return evalProgram(node.Statements, env)
 	case *ast.LetStatement:
-		env.Set(node.Name.Value, Eval(node.Value, env))
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return nil
+		}
+		env.Set(node.Name.Value, val)
 		return nil
 	case *ast.ReturnStatement:
 		val := Eval(node.ReturnValue, env)
+		if isError(val) {
+			return val
+		}
 		return &object.ReturnValue{Value: val}
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
@@ -49,7 +56,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return applyFunction(function, args)
 	case *ast.Infix:
 		left := Eval(node.Left, env)
+		if isError(left) {
+			return left
+		}
 		right := Eval(node.Right, env)
+		if isError(right) {
+			return right
+		}
 		return evalInfixExpression(node.Operator, left, right)
 	}
 	return nil
@@ -132,6 +145,9 @@ func evalIntegerInfixExpression(
 
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
 	condition := Eval(ie.Condition, env)
+	if isError(condition) {
+		return condition
+	}
 	if isTruthy(condition) {
 		return Eval(ie.Consequence, env)
 	} else if ie.Alternative != nil {
@@ -186,4 +202,11 @@ func isTruthy(obj object.Object) bool {
 
 func newError(format string, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf(format, a...)}
+}
+
+func isError(obj object.Object) bool {
+	if obj != nil {
+		return obj.Type() == object.ERROR_OBJ
+	}
+	return false
 }
