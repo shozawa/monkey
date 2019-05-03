@@ -120,6 +120,14 @@ func TestErrorHandling(t *testing.T) {
 	}{
 		{"5 + true", "type mismatch: INTEGER + BOOLEAN"},
 		{"5 + true; 9;", "type mismatch: INTEGER + BOOLEAN"},
+		{`
+		if (true) {
+			if (true) {
+				5 + true;
+			}
+			9;
+		}
+		`, "type mismatch: INTEGER + BOOLEAN"},
 	}
 	for _, test := range tests {
 		evaluated := testEval(test.input)
