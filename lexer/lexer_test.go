@@ -8,6 +8,8 @@ import (
 
 func TestNextToken(t *testing.T) {
 	input := `
+	5 > 3;
+	5 < 3;
 	let five = 5;
 	let ten = 10;
 	`
@@ -15,6 +17,16 @@ func TestNextToken(t *testing.T) {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
+		// 5 > 3;
+		{token.INT, "5"},
+		{token.GT, ">"},
+		{token.INT, "3"},
+		{token.SEMICOLON, ";"},
+		// 5 < 3;
+		{token.INT, "5"},
+		{token.LT, "<"},
+		{token.INT, "3"},
+		{token.SEMICOLON, ";"},
 		// let five = 5;
 		{token.LET, "let"},
 		{token.IDENT, "five"},

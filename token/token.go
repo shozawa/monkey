@@ -43,6 +43,9 @@ const (
 	ELSE     = "ELSE"
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
+
+	LT = "<"
+	GT = ">"
 )
 
 func LookupIdent(ident string) Token {
