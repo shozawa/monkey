@@ -27,6 +27,7 @@ const (
 
 	ASSIGN   = "ASSIGN"
 	PLUS     = "PLUS"
+	MINUS    = "MINUS"
 	ASTERISK = "ASTERISK"
 
 	COMMA     = "COMMA"
