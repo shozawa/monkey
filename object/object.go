@@ -9,10 +9,11 @@ import (
 type ObjectType string
 
 const (
-	INTEGER_OBJ  = "INTEGER"
-	BOOL_OBJ     = "BOOL"
-	FUNCTION_OBJ = "FUNCTION"
-	NULL_OBJ     = "NULL"
+	INTEGER_OBJ      = "INTEGER"
+	BOOL_OBJ         = "BOOL"
+	FUNCTION_OBJ     = "FUNCTION"
+	NULL_OBJ         = "NULL"
+	RETURN_VALUE_OBJ = "RETURN_VALUE"
 )
 
 func NewEnclosedEnvironment(outer *Environment) *Environment {
@@ -75,3 +76,10 @@ type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL_OBJ }
 func (n *Null) Inspect() string  { return "null" }
+
+type ReturnValue struct {
+	Value Object
+}
+
+func (r *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
+func (r *ReturnValue) Inspect() string  { return r.Value.Inspect() }
