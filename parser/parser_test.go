@@ -42,6 +42,8 @@ func TestParseInfixExpression(t *testing.T) {
 	}{
 		{"1 + 2;", 1, "+", 2},
 		{"2 * 3;", 2, "*", 3},
+		{"1 > 3;", 1, ">", 3},
+		{"1 < 3;", 1, "<", 3},
 	}
 
 	for _, test := range tests {

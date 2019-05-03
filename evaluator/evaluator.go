@@ -138,6 +138,10 @@ func evalIntegerInfixExpression(
 		return &object.Integer{Value: leftVal + rightVal}
 	case "*":
 		return &object.Integer{Value: leftVal * rightVal}
+	case "<":
+		return nativeToBoolObject(leftVal < rightVal)
+	case ">":
+		return nativeToBoolObject(leftVal > rightVal)
 	default:
 		return NULL
 	}
@@ -177,6 +181,14 @@ func extendFunctionEnv(
 	}
 
 	return env
+}
+
+func nativeToBoolObject(b bool) *object.Bool {
+	if b {
+		return TRUE
+	} else {
+		return FALSE
+	}
 }
 
 func strToBoolObject(str string) *object.Bool {
