@@ -89,6 +89,22 @@ func TestEvalLetStatement(t *testing.T) {
 		t.Errorf("integer.Value not 5. got=%d", integer.Value)
 	}
 }
+
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input string
+		want  int64
+	}{
+		{"return 10;", 10},
+		{"return 10; 9;", 10},
+		{"9; return 2 * 5; 9;", 10},
+	}
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		testIntegerObject(t, evaluated, test.want)
+	}
+}
+
 func TestEvalPlus(t *testing.T) {
 	input := `
 	let five = 5;

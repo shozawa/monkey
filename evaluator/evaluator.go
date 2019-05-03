@@ -18,6 +18,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.LetStatement:
 		env.Set(node.Name.Value, Eval(node.Value, env))
 		return nil
+	case *ast.ReturnStatement:
+		val := Eval(node.ReturnValue, env)
+		return &object.ReturnValue{Value: val}
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
 	case *ast.Identifier:
@@ -59,6 +62,9 @@ func evalStatements(stmts []ast.Statement, env *object.Environment) object.Objec
 
 	for _, stmt := range stmts {
 		result = Eval(stmt, env)
+		if returnValue, ok := result.(*object.ReturnValue); ok {
+			return returnValue.Value
+		}
 	}
 
 	return result
