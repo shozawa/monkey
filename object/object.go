@@ -10,9 +10,10 @@ type ObjectType string
 
 const (
 	INTEGER_OBJ      = "INTEGER"
-	BOOL_OBJ         = "BOOL"
+	BOOL_OBJ         = "BOOLEAN"
 	FUNCTION_OBJ     = "FUNCTION"
 	NULL_OBJ         = "NULL"
+	ERROR_OBJ        = "ERROR"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 )
 
@@ -83,3 +84,10 @@ type ReturnValue struct {
 
 func (r *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
 func (r *ReturnValue) Inspect() string  { return r.Value.Inspect() }
+
+type Error struct {
+	Message string
+}
+
+func (e *Error) Type() ObjectType { return ERROR_OBJ }
+func (e *Error) Inspect() string  { return "ERROR: " + e.Message }

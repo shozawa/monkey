@@ -113,6 +113,27 @@ func TestReturnStatements(t *testing.T) {
 	}
 }
 
+func TestErrorHandling(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"5 + true", "type mismatch: INTEGER + BOOLEAN"},
+		{"5 + true; 9;", "type mismatch: INTEGER + BOOLEAN"},
+	}
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		errObj, ok := evaluated.(*object.Error)
+		if !ok {
+			t.Errorf("no error object returned. got=%T(%+v)", evaluated, evaluated)
+			continue
+		}
+		if errObj.Message != test.want {
+			t.Errorf("wrong error message. expected=%q, got=%q", test.want, errObj.Message)
+		}
+	}
+}
+
 func TestEvalPlus(t *testing.T) {
 	input := `
 	let five = 5;
