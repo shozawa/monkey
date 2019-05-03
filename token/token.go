@@ -46,8 +46,12 @@ const (
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
 
+	BANG = "!"
+
 	LT = "<"
 	GT = ">"
+	EQ = "=="
+	NOT_EQ = "!="
 )
 
 func LookupIdent(ident string) Token {

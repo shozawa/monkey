@@ -13,6 +13,9 @@ func TestNextToken(t *testing.T) {
 	1 + 2 - 3 * 4 / 5;
 	let five = 5;
 	let ten = 10;
+	1 == 1;
+	1 != 1;
+	!false;
 	`
 	tests := []struct {
 		expectedType    token.TokenType
@@ -50,6 +53,20 @@ func TestNextToken(t *testing.T) {
 		{token.IDENT, "ten"},
 		{token.ASSIGN, "="},
 		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
+		// 1 == 1;
+		{token.INT, "1"},
+		{token.EQ, "=="},
+		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		// 1 =! 1;
+		{token.INT, "1"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		// !false;
+		{token.BANG, "!"},
+		{token.FALSE, "false"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
