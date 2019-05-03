@@ -14,7 +14,7 @@ var (
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 	case *ast.Program:
-		return evalStatements(node.Statements, env)
+		return evalProgram(node.Statements, env)
 	case *ast.LetStatement:
 		env.Set(node.Name.Value, Eval(node.Value, env))
 		return nil
@@ -34,11 +34,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.BoolLiteral:
 		return strToBoolObject(node.Value)
 	case *ast.BlockStatement:
-		var result object.Object
-		for _, stmt := range node.Statements {
-			result = Eval(stmt, env)
-		}
-		return result
+		return evalBlockStatement(node, env)
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
 	case *ast.FunctionLiteral:
@@ -57,13 +53,26 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	return nil
 }
 
-func evalStatements(stmts []ast.Statement, env *object.Environment) object.Object {
+func evalProgram(stmts []ast.Statement, env *object.Environment) object.Object {
 	var result object.Object
 
 	for _, stmt := range stmts {
 		result = Eval(stmt, env)
 		if returnValue, ok := result.(*object.ReturnValue); ok {
 			return returnValue.Value
+		}
+	}
+
+	return result
+}
+
+func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) object.Object {
+	var result object.Object
+
+	for _, stmt := range block.Statements {
+		result = Eval(stmt, env)
+		if result != nil && result.Type() == object.RETURN_VALUE_OBJ {
+			return result
 		}
 	}
 
