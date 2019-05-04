@@ -183,6 +183,10 @@ func evalIntegerInfixExpression(
 		return &object.Integer{Value: leftVal * rightVal}
 	case "/":
 		return &object.Integer{Value: leftVal / rightVal}
+	case "==":
+		return nativeToBoolObject(leftVal == rightVal)
+	case "!=":
+		return nativeToBoolObject(leftVal != rightVal)
 	case "<":
 		return nativeToBoolObject(leftVal < rightVal)
 	case ">":
