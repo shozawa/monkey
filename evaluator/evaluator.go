@@ -64,6 +64,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return right
 		}
 		return evalInfixExpression(node.Operator, left, right)
+	case *ast.PrefixExpression:
+		right := Eval(node.Right, env)
+		if isError(right) {
+			return right
+		}
+		return evalPrefixExpression(node.Operator, right)
 	}
 	return nil
 }
@@ -111,6 +117,31 @@ func evalExpressions(
 		result = append(result, evaluated)
 	}
 	return result
+}
+
+func evalPrefixExpression(
+	operator string,
+	right object.Object,
+) object.Object {
+	switch operator {
+	case "!":
+		return evalBangOperator(right)
+	default:
+		return NULL
+	}
+}
+
+func evalBangOperator(right object.Object) object.Object {
+	switch right {
+	case TRUE:
+		return FALSE
+	case FALSE:
+		return TRUE
+	case NULL:
+		return TRUE
+	default:
+		return FALSE
+	}
 }
 
 func evalInfixExpression(
