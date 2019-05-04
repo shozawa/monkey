@@ -206,9 +206,9 @@ func TestFunctionApplication(t *testing.T) {
 		{`
 		let fib = fn(x) {
 			if (x < 2) {
-				x;
+				return x;
 			} else {
-				fib(x - 1) + fib(x - 2);
+				return fib(x - 1) + fib(x - 2);
 			}
 		};
 		fib(10);

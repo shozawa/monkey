@@ -216,7 +216,16 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 		return nil
 	}
 	extendEnv := extendFunctionEnv(function, args)
-	return Eval(function.Body, extendEnv)
+	evaluated := Eval(function.Body, extendEnv)
+	return unwrapReturnValue(evaluated)
+}
+
+func unwrapReturnValue(obj object.Object) object.Object {
+	if returnValue, ok := obj.(*object.ReturnValue); ok {
+		return returnValue.Value
+	} else {
+		return obj
+	}
 }
 
 func extendFunctionEnv(
