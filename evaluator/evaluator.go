@@ -126,9 +126,19 @@ func evalPrefixExpression(
 	switch operator {
 	case "!":
 		return evalBangOperator(right)
+	case "-":
+		return evalMinusOperator(right)
 	default:
 		return NULL
 	}
+}
+
+func evalMinusOperator(right object.Object) object.Object {
+	integer, ok := right.(*object.Integer)
+	if !ok {
+		return newError("%s is not INTEGER", right)
+	}
+	return &object.Integer{Value: -integer.Value}
 }
 
 func evalBangOperator(right object.Object) object.Object {
