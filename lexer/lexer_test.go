@@ -82,6 +82,33 @@ func TestNextToken(t *testing.T) {
 	}
 }
 
+func TestConsumeStringLiteral(t *testing.T) {
+	tests := []struct {
+		input string
+		want  []token.Token
+	}{
+		{
+			`let str = "hello";`,
+			[]token.Token{
+				token.Token{Type: token.LET, Literal: "let"},
+				token.Token{Type: token.IDENT, Literal: "str"},
+				token.Token{Type: token.ASSIGN, Literal: "="},
+				token.Token{Type: token.STRING, Literal: "hello"},
+				token.Token{Type: token.SEMICOLON, Literal: ";"},
+			},
+		},
+	}
+	for _, test := range tests {
+		l := New(test.input)
+		for _, want := range test.want {
+			tok := l.NextToken()
+			if tok != want {
+				t.Errorf("tok is not %v. got=%v", want, tok)
+			}
+		}
+	}
+}
+
 func TestIsLetter(t *testing.T) {
 	tests := []struct {
 		input byte

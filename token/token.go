@@ -21,6 +21,8 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
+	STRING = "STRING"
+
 	IDENT  = "IDENT"
 	INT    = "INT"
 	RETURN = "RETURN"
@@ -48,9 +50,9 @@ const (
 
 	BANG = "!"
 
-	LT = "<"
-	GT = ">"
-	EQ = "=="
+	LT     = "<"
+	GT     = ">"
+	EQ     = "=="
 	NOT_EQ = "!="
 )
 

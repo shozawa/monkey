@@ -67,6 +67,8 @@ func (l *Lexer) NextToken() (tok token.Token) {
 	default:
 		if isDigit(l.ch) {
 			tok = l.readInteger()
+		} else if l.ch == '"' {
+			tok = l.readStringLiteral()
 		} else if isLetter(l.ch) {
 			tok = l.readIdentifier()
 		} else {
@@ -118,6 +120,17 @@ func (l *Lexer) readInteger() token.Token {
 	}
 	i := l.input[position:l.position]
 	return token.Token{Type: token.INT, Literal: i}
+}
+
+func (l *Lexer) readStringLiteral() token.Token {
+	l.readChar() // consume "
+	position := l.position
+	for l.ch != '"' {
+		l.readChar()
+	}
+	s := l.input[position:l.position]
+	l.readChar() // consume "
+	return token.Token{Type: token.STRING, Literal: s}
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
