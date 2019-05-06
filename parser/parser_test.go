@@ -8,6 +8,32 @@ import (
 	"github.com/shozawa/monkey/lexer"
 )
 
+func TestParseStringLiteral(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{`"foo";`, "foo"},
+		{`"foo bar";`, "foo bar"},
+	}
+	for _, test := range tests {
+		l := lexer.New(test.input)
+		p := New(l)
+		program := p.Parse()
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Error("progoram.Statements[0] is not ast.ExpressionStatement")
+		}
+		str, ok := stmt.Expression.(*ast.StringLiteral)
+		if !ok {
+			t.Errorf("stmt.Expression is not ast.StringLiteral. got=%T", stmt.Expression)
+		}
+		if str.Value != test.want {
+			t.Errorf("str.Value is not %q. got=%q", test.want, str.Value)
+		}
+	}
+}
+
 func TestParseExpressionStatement(t *testing.T) {
 	tests := []struct {
 		input string
