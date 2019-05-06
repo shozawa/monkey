@@ -49,6 +49,20 @@ func TestEvalStringExpression(t *testing.T) {
 	}
 }
 
+func TestEvalBuiltinFunction(t *testing.T) {
+	tests := []struct {
+		input string
+		want  int64
+	}{
+		{`len("");`, 0},
+		{`len("four");`, 4},
+	}
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		testIntegerObject(t, evaluated, test.want)
+	}
+}
+
 func TestEvalBoolExpression(t *testing.T) {
 	tests := []struct {
 		input string

@@ -33,11 +33,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
 	case *ast.Identifier:
-		value, ok := env.Get(node.Value)
-		if !ok {
-			return nil
+		if value, ok := env.Get(node.Value); ok {
+			return value
 		}
-		return value
+		if builtin, ok := builtins[node.Value]; ok {
+			return builtin
+		}
+		return newError("identifier not found: " + node.Value)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.StringLiteral:
@@ -213,13 +215,16 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
-	function, ok := fn.(*object.Function)
-	if !ok {
-		return nil
+	switch function := fn.(type) {
+	case *object.Function:
+		extendEnv := extendFunctionEnv(function, args)
+		evaluated := Eval(function.Body, extendEnv)
+		return unwrapReturnValue(evaluated)
+	case *object.Builtin:
+		return function.Fn(args...)
+	default:
+		return newError("not a function: %s", function.Type())
 	}
-	extendEnv := extendFunctionEnv(function, args)
-	evaluated := Eval(function.Body, extendEnv)
-	return unwrapReturnValue(evaluated)
 }
 
 func unwrapReturnValue(obj object.Object) object.Object {
