@@ -30,6 +30,25 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}
 }
 
+func TestEvalStringExpression(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{`"hello, world"`, "hello, world"},
+	}
+	for _, test := range tests {
+		evaluated := testEval(test.input)
+		str, ok := evaluated.(*object.String)
+		if !ok {
+			t.Errorf("evaluated is not String. got=%T", evaluated)
+		}
+		if str.Value != test.want {
+			t.Errorf("str.Value is not %q. got=%q", test.want, str.Value)
+		}
+	}
+}
+
 func TestEvalBoolExpression(t *testing.T) {
 	tests := []struct {
 		input string

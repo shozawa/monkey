@@ -10,6 +10,7 @@ type ObjectType string
 
 const (
 	INTEGER_OBJ      = "INTEGER"
+	STRING_OBJ       = "STRING"
 	BOOL_OBJ         = "BOOLEAN"
 	FUNCTION_OBJ     = "FUNCTION"
 	NULL_OBJ         = "NULL"
@@ -56,6 +57,13 @@ type Integer struct {
 
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
+
+type String struct {
+	Value string
+}
+
+func (s *String) Type() ObjectType { return STRING_OBJ }
+func (s *String) Inspect() string  { return s.Value }
 
 type Bool struct {
 	Value bool
