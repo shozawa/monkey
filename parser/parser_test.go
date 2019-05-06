@@ -105,6 +105,7 @@ func TestParseInfixExpression(t *testing.T) {
 		{"1 < 3;", 1, "<", 3},
 		{"1 == 1;", 1, "==", 1},
 		{"1 != 1;", 1, "!=", 1},
+		{"10 % 3;", 10, "%", 3},
 	}
 
 	for _, test := range tests {
